@@ -6,8 +6,8 @@ services:
       - './nginx/default.conf:/etc/nginx/nginx.conf'
       - './nginx/ssl:/etc/nginx/ssl'
     ports:
-      - '8080:80' #local:docker
-      - '553:443'
+      - '8081:80' #local:docker
+      - '554:443'
     depends_on:
       - auth-shoora
 
