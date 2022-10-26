@@ -13,9 +13,11 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         role_objects = user.roles.all().values_list("uuid", flat=True)
         roles = [str(role) for role in role_objects]
         token['user_id'] = str(user.uuid)
+        token.is_superuser = user.is_superuser
         if user.organization:
             token['organization_id'] = str(user.organization.uuid)
         token['roles'] = roles
+        print(token.__dict__)
         # ...
 
         return token
@@ -30,6 +32,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='uuid')
+    url = serializers.HyperlinkedIdentityField(view_name='users-detail', lookup_field='uuid', lookup_url_kwarg='uuid')
     organization_id = serializers.SlugRelatedField(
         queryset = Organization.objects.all(),
         slug_field = 'uuid',
@@ -42,10 +45,17 @@ class UserSerializer(serializers.ModelSerializer):
         required=False
     )
     roles = RoleSerializer(read_only=True, many=True)
+    organization_url = serializers.HyperlinkedRelatedField(
+        source='organization',
+        # queryset = Organization.objects.all(),
+        view_name='organizations-detail',
+        lookup_field='uuid',
+        read_only=True)
     class Meta:
         model = User
         fields = (
             'id',
+            'url',
             'name',
             'address',
             'contact_code',
@@ -55,7 +65,8 @@ class UserSerializer(serializers.ModelSerializer):
             'is_active',
             'password',
             'role_ids',
-            "roles"
+            "roles",
+            "organization_url",
         )
     
     def create(self, validated_data):

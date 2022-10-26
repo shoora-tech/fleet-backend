@@ -2,6 +2,7 @@ from rest_framework import serializers
 from organization.models import Organization
 from feature.apis.serializers import FeatureSerializer
 from feature.models import Feature
+from rest_framework.reverse import reverse
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -11,6 +12,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         child=serializers.UUIDField(),
         write_only=True
     )
+    roles_url = serializers.SerializerMethodField()
     class Meta:
         model = Organization
         fields = (
@@ -24,7 +26,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'is_active',
             'features',
             'feature_ids',
-            'image'
+            'image',
+            'roles_url',
         )
     def create(self, validated_data):
         feature_ids = validated_data.pop("feature_ids", [])
@@ -32,3 +35,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         features = Feature.objects.filter(uuid__in=feature_ids)
         organization.features.add(*features)
         return organization
+    
+
+    def get_roles_url(self, org):
+        return reverse('roles-list', request=self.context['request'])
