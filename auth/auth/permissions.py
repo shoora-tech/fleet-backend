@@ -38,7 +38,6 @@ def role_has_access(request):
 
 class UserPermission(BasePermission):
     def has_permission(self, request, view):
-        # return True
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
         if user.is_superuser:

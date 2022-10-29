@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from auth.permissions import UserPermission
 from .serializers import RoleSerializer, UserSerializer, MyTokenObtainPairSerializer
 from user.models import User, Role
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -12,6 +12,17 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        token = super().post(request, *args, **kwargs)
+        JWTA = JWTAuthentication()
+        access_token = AccessToken(token.data['access'])
+        user = JWTA.get_user(access_token.payload)
+        user_serializer = UserSerializer(user, context={'request': request})
+        data = user_serializer.data
+        data['refresh'] = token.data['refresh']
+        data['access'] = token.data['access']
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):

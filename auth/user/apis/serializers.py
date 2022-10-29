@@ -17,7 +17,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user.organization:
             token['organization_id'] = str(user.organization.uuid)
         token['roles'] = roles
-        print(token.__dict__)
         # ...
 
         return token
