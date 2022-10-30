@@ -6,10 +6,11 @@ services:
       - './nginx/default.conf:/etc/nginx/nginx.conf'
       - './nginx/ssl:/etc/nginx/ssl'
     ports:
-      - '8081:80' #local:docker
+      - '8888:80' #local:docker
       - '554:443'
     depends_on:
       - auth-shoora
+      - transport-shoora
 
   #django app
   auth-shoora:
@@ -27,3 +28,18 @@ services:
       '
     ports:
       - "8000:8000"
+  transport-shoora:
+    image: python:3.7
+    volumes:
+      - ./transport:/app
+    command: |
+      sh -c '
+      cd /app
+      pip install --upgrade pip
+      make deps
+      make migrate
+      python manage.py collectstatic
+      python manage.py runserver 0.0.0.0:8000
+      '
+    ports:
+      - "8001:8000"

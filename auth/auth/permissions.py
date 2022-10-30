@@ -20,12 +20,12 @@ def organization_has_access_to_feature(organization_id, feature):
         return False
 
 
-def role_has_access(request):
+def role_has_access(request, feature, action):
     payload = request.auth.payload
     organization_id = payload['organization_id']
     roles = payload['roles']
-    action = request.method
-    feature = Feature.objects.get(name="USER")
+    
+    
     if organization_id == None:
         return False
     if organization_has_access_to_feature(organization_id, feature):
@@ -38,12 +38,33 @@ def role_has_access(request):
 
 class UserPermission(BasePermission):
     def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
         if user.is_superuser:
             return True
-        if not request.user.is_authenticated:
-            return False
-        if role_has_access(request):
+        action = request.method
+        feature = Feature.objects.get(name="USER")
+        if role_has_access(request, feature, action):
             return True
         return False
+
+
+class ExternalPermission(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        JWTA = JWTAuthentication()
+        user = JWTA.get_user(request.auth.payload)
+        if user.is_superuser:
+            return True
+        data = request.data
+
+        feature = feature = Feature.objects.get(name=data.get('feature'))
+        action = data.get('method')
+        if role_has_access(request, feature, action):
+            return True
+        return False
+
+
