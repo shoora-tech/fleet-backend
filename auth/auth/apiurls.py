@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
 from organization.apis.viewsets import OrganizationViewSet
-from user.apis.viewsets import UserViewSet, MyTokenObtainPairView, RoleViewSet
+from user.apis.viewsets import UserViewSet, MyTokenObtainPairView, RoleViewSet, CheckPermissionsForExternalApps
 from feature.apis.viewsets import FeatureViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -19,5 +19,6 @@ router.register('roles', RoleViewSet, basename='roles')
 urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("external-permission/", CheckPermissionsForExternalApps.as_view(), name='external_permission'),
     path("", include(router.urls)),
 ]

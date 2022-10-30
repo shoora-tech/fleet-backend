@@ -77,3 +77,8 @@ class UserSerializer(serializers.ModelSerializer):
             user.roles.add(*roles)
         user.save()
         return user
+
+
+class CheckPermissionsForExternalAppsSerializer(serializers.Serializer):
+    feature = serializers.CharField(required=True)
+    method = serializers.CharField(required=True)

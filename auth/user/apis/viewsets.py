@@ -1,7 +1,8 @@
 from rest_framework import viewsets
+from rest_framework import views
 
-from auth.permissions import UserPermission
-from .serializers import RoleSerializer, UserSerializer, MyTokenObtainPairSerializer
+from auth.permissions import UserPermission, ExternalPermission
+from .serializers import RoleSerializer, UserSerializer, MyTokenObtainPairSerializer, CheckPermissionsForExternalAppsSerializer
 from user.models import User, Role
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.response import Response
@@ -60,4 +61,19 @@ class RoleViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'uuid'
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
+
+
+class CheckPermissionsForExternalApps(views.APIView):
+    serializer_class = CheckPermissionsForExternalAppsSerializer
+    permission_classes = [ExternalPermission]
+    def post(self, request):
+        # headers --> auth token
+        # body --> {'feature': 'vehicle', 'method': 'GET'}
+        serializer = CheckPermissionsForExternalAppsSerializer(data=request.data)
+        if serializer.is_valid():
+            # check for permission
+            return Response({'is_valid': True}, status=status.HTTP_200_OK)
+        return Response({'is_valid': False}, status=status.HTTP_400_BAD_REQUEST)
+
+        
 
