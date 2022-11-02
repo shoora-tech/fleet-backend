@@ -9,5 +9,9 @@ class VehicleSerializer(serializers.ModelSerializer):
         model = Vehicle
         fields = (
             'id',
+            'make',
+            'model',
             'vin',
+            
+
         )

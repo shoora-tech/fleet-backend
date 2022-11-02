@@ -54,6 +54,7 @@ class Vehicle(models.Model):
     make = models.ForeignKey(VehicleMake, on_delete=models.CASCADE)
     model = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
     vin = models.CharField(max_length=25)
+    
     vehicle_type = models.ForeignKey(VehicleType, on_delete=models.CASCADE)
     device = models.ForeignKey(Device, on_delete=models.SET_NULL, blank=True, null=True)
     last_status_update = models.DateTimeField(blank=True, null=True)
