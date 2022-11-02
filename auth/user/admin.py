@@ -15,6 +15,6 @@ class AccessControlAdmin(admin.ModelAdmin):
     list_display = ("role", "feature", "get_methods")
 
     def get_methods(self, obj):
-        return "\n".join([p.name for p in obj.method.all()])
+        return " | ".join([p.name for p in obj.method.all()])
 
 admin.site.register(Method)

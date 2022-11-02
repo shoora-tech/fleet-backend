@@ -13,7 +13,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False
     )
-    roles_url = serializers.SerializerMethodField()
     class Meta:
         model = Organization
         fields = (
@@ -28,9 +27,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'features',
             'feature_ids',
             'image',
-            'roles_url',
-            'vehicles_url',
-            'features_url',
         )
     # def validate_contact_code(self):
     #     pass
@@ -40,14 +36,4 @@ class OrganizationSerializer(serializers.ModelSerializer):
         features = Feature.objects.filter(uuid__in=feature_ids)
         organization.features.add(*features)
         return organization
-    
-
-    def get_roles_url(self, org):
-        return reverse('roles-list', request=self.context['request']) 
-
-    def get_features_url(self, org):
-        return reverse('features-list', request=self.context['request']) 
-    
-    def get_vehicles_url(self, org):
-        return reverse('vehicles-list', request=self.context['request'])
 

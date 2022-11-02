@@ -38,7 +38,6 @@ def role_has_access(request, feature, method):
 
 class AccessControlPermission(BasePermission):
     def has_permission(self, request, view):
-        print("view is" , view.basename)
         if not request.user.is_authenticated:
             return False
         JWTA = JWTAuthentication()

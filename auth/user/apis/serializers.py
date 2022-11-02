@@ -54,6 +54,7 @@ class UserSerializer(serializers.ModelSerializer):
     roles_url = serializers.SerializerMethodField()
     features_url = serializers.SerializerMethodField()
     vehicles_url = serializers.SerializerMethodField()
+    drivers_url = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = (
@@ -73,6 +74,7 @@ class UserSerializer(serializers.ModelSerializer):
             "roles_url",
             "features_url",
             "vehicles_url",
+            "drivers_url",
         )
     
     def create(self, validated_data):
@@ -93,3 +95,6 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_vehicles_url(self, org):
         return reverse('vehicles-list', request=self.context['request'])
+
+    def get_drivers_url(self, org):
+        return reverse('drivers-list', request=self.context['request'])
