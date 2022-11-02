@@ -2,6 +2,7 @@ from rest_framework import serializers
 from user.models import User, Role
 from organization.models import Organization
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework.reverse import reverse
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -50,6 +51,9 @@ class UserSerializer(serializers.ModelSerializer):
         view_name='organizations-detail',
         lookup_field='uuid',
         read_only=True)
+    roles_url = serializers.SerializerMethodField()
+    features_url = serializers.SerializerMethodField()
+    vehicles_url = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = (
@@ -66,6 +70,9 @@ class UserSerializer(serializers.ModelSerializer):
             'role_ids',
             "roles",
             "organization_url",
+            "roles_url",
+            "features_url",
+            "vehicles_url",
         )
     
     def create(self, validated_data):
@@ -77,8 +84,12 @@ class UserSerializer(serializers.ModelSerializer):
             user.roles.add(*roles)
         user.save()
         return user
+    
+    def get_roles_url(self, org):
+        return reverse('roles-list', request=self.context['request']) 
 
-
-class CheckPermissionsForExternalAppsSerializer(serializers.Serializer):
-    feature = serializers.CharField(required=True)
-    method = serializers.CharField(required=True)
+    def get_features_url(self, org):
+        return reverse('features-list', request=self.context['request']) 
+    
+    def get_vehicles_url(self, org):
+        return reverse('vehicles-list', request=self.context['request'])

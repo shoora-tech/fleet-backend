@@ -10,7 +10,8 @@ class OrganizationSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
     feature_ids = serializers.ListField(
         child=serializers.UUIDField(),
-        write_only=True
+        write_only=True,
+        required=False
     )
     roles_url = serializers.SerializerMethodField()
     class Meta:
@@ -28,7 +29,11 @@ class OrganizationSerializer(serializers.ModelSerializer):
             'feature_ids',
             'image',
             'roles_url',
+            'vehicles_url',
+            'features_url',
         )
+    # def validate_contact_code(self):
+    #     pass
     def create(self, validated_data):
         feature_ids = validated_data.pop("feature_ids", [])
         organization = super().create(validated_data)
@@ -38,4 +43,11 @@ class OrganizationSerializer(serializers.ModelSerializer):
     
 
     def get_roles_url(self, org):
-        return reverse('roles-list', request=self.context['request'])
+        return reverse('roles-list', request=self.context['request']) 
+
+    def get_features_url(self, org):
+        return reverse('features-list', request=self.context['request']) 
+    
+    def get_vehicles_url(self, org):
+        return reverse('vehicles-list', request=self.context['request'])
+

@@ -47,6 +47,7 @@ class User(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     roles = models.ManyToManyField("role", related_name="users", blank=True, null=True)
@@ -75,10 +76,21 @@ class Role(models.Model):
         return self.name
 
 
+class Method(models.Model):
+    uuid = models.UUIDField(
+        default=uuid4, unique=True, editable=False, verbose_name="UUID"
+    )
+    name = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.name
+
+
 class AccessControl(models.Model):
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
     feature = models.ForeignKey(Feature, verbose_name=_("feature"), on_delete=models.CASCADE)
     role = models.ForeignKey(Role, verbose_name=_("role"), on_delete=models.CASCADE)
-    action = models.CharField(max_length=50)
+    method = models.ManyToManyField(Method, related_name="access_controls")
+
