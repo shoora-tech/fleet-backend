@@ -13,8 +13,6 @@ class VehicleSerializer(serializers.ModelSerializer):
             'make',
             'model',
             'vin',
-            'owner_name',
-            'vehicle_number',
-            'vehicle_image',
+            
 
         )
