@@ -12,4 +12,9 @@ class RoleAdmin(admin.ModelAdmin):
 
 @admin.register(AccessControl)
 class AccessControlAdmin(admin.ModelAdmin):
-    list_display = ("role", "feature", "action")
+    list_display = ("role", "feature", "get_methods")
+
+    def get_methods(self, obj):
+        return "\n".join([p.name for p in obj.method.all()])
+
+admin.site.register(Method)

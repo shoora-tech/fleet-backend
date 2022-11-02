@@ -12,3 +12,6 @@ run:
 
 startapp: 
 	python manage.py startapp "$(app)"
+
+containers:
+	docker-compose up

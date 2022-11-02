@@ -1,0 +1,2 @@
+containers:
+	docker-compose up

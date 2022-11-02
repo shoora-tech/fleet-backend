@@ -1,4 +1,5 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from user.models import Method
+from rest_framework.permissions import BasePermission
 from organization.models import Organization
 
 from user.models import AccessControl
@@ -20,51 +21,47 @@ def organization_has_access_to_feature(organization_id, feature):
         return False
 
 
-def role_has_access(request, feature, action):
+def role_has_access(request, feature, method):
     payload = request.auth.payload
     organization_id = payload['organization_id']
     roles = payload['roles']
-    
     
     if organization_id == None:
         return False
     if organization_has_access_to_feature(organization_id, feature):
         try:
-            AccessControl.objects.get(role__uuid__in=roles, action=action, feature=feature)
+            AccessControl.objects.get(role__uuid__in=roles, method__in=[method.pk], feature=feature)
             return True
-        except AccessControl.DoesNotExist:
+        except Exception:
             return False
     return False
 
-class UserPermission(BasePermission):
+class AccessControlPermission(BasePermission):
     def has_permission(self, request, view):
+        print("view is" , view.basename)
         if not request.user.is_authenticated:
             return False
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
         if user.is_superuser:
             return True
-        action = request.method
-        feature = Feature.objects.get(name="USER")
-        if role_has_access(request, feature, action):
-            return True
-        return False
-
-
-class ExternalPermission(BasePermission):
-    def has_permission(self, request, view):
-        if not request.user.is_authenticated:
+        try:
+            feature = Feature.objects.get(name=view.basename)
+            print("fature is ", feature)
+        except Feature.DoesNotExist:
             return False
-        JWTA = JWTAuthentication()
-        user = JWTA.get_user(request.auth.payload)
-        if user.is_superuser:
-            return True
-        data = request.data
-
-        feature = feature = Feature.objects.get(name=data.get('feature'))
-        action = data.get('method')
-        if role_has_access(request, feature, action):
+        try:
+            method = Method.objects.get(name=request.method)
+        except Method.DoesNotExist:
+            return False
+        if role_has_access(request, feature, method):
             return True
         return False
-
-
+    
+    def has_object_permission(self, request, view, obj):
+        # grant access if the requestor is superuser or of the same organization
+        payload = request.auth.payload
+        organization_id = payload['organization_id']
+        if obj.organization.uuid == organization_id:
+            return True
+        return False

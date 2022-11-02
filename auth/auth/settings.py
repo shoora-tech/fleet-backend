@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'feature',
     'organization',
     'user',
+    'device',
+    'vehicle',
+    'driver',
 
 ]
 
@@ -81,6 +84,7 @@ WSGI_APPLICATION = 'auth.wsgi.application'
 # Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES': ['auth.permissions.AccessControlPermission'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 20
