@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from datetime import timedelta
+from environ import Env
+
+ENV = Env()
+Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,10 +25,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'u=4k)s&nen-&h#_3%_&+f#ieom(ztk$w)!#4azqruzofhavs99'
+SECRET_KEY = ENV.str("SECRET_KEY", "debug-secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ENV.bool("DEBUG", False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -126,27 +130,28 @@ SIMPLE_JWT = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
+is_local_development = ENV.bool("LOCAL_DB", False)
+if is_local_development:
+    # Database
+    # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'shoora_fleet_management',
-        'USER': 'shoora',
-        'PASSWORD': 'A406bsNRtFBLne5wriIQ',
-        'HOST': 'shoora.crpd6o4smocv.ap-south-1.rds.amazonaws.com',
-        'PORT': 5432,
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': ENV.str("DB_NAME", None),
+            'USER': ENV.str("DB_USER", None),
+            'PASSWORD': ENV.str("DB_PASSWORD", None),
+            'HOST': ENV.str("DB_HOST", None),
+            'PORT': ENV.str("DB_PORT", None),
+        }
+    }
 
 
 # Password validation
