@@ -5,7 +5,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class DriverViewSet(viewsets.ModelViewSet):
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
 
@@ -15,7 +15,6 @@ class DriverViewSet(viewsets.ModelViewSet):
         user = JWTA.get_user(payload)
         if user.is_superuser:
             return self.queryset
-        organization_id = payload['organization_id']
+        organization_id = payload["organization_id"]
         qs = self.queryset.filter(organization__uuid=organization_id)
         return qs
-    

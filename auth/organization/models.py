@@ -4,11 +4,14 @@ from feature.models import Feature
 from django.utils.translation import gettext as _
 
 from auth.storage import get_image_upload_path
-# Create your models here. 
+
+# Create your models here.
 # id --> pk
 class Organization(models.Model):
     contact_code_prefix = "+"
-    uuid = models.UUIDField(unique=True, default=uuid4, editable=False, verbose_name=_("UUID"))
+    uuid = models.UUIDField(
+        unique=True, default=uuid4, editable=False, verbose_name=_("UUID")
+    )
     name = models.CharField(max_length=50)
     address = models.TextField()
     registration_number = models.TextField()
@@ -24,5 +27,3 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
-    
-    

@@ -23,18 +23,21 @@ def organization_has_access_to_feature(organization_id, feature):
 
 def role_has_access(request, feature, method):
     payload = request.auth.payload
-    organization_id = payload['organization_id']
-    roles = payload['roles']
-    
+    organization_id = payload["organization_id"]
+    roles = payload["roles"]
+
     if organization_id == None:
         return False
     if organization_has_access_to_feature(organization_id, feature):
         try:
-            AccessControl.objects.get(role__uuid__in=roles, method__in=[method.pk], feature=feature)
+            AccessControl.objects.get(
+                role__uuid__in=roles, method__in=[method.pk], feature=feature
+            )
             return True
         except Exception:
             return False
     return False
+
 
 class AccessControlPermission(BasePermission):
     def has_permission(self, request, view):
@@ -56,11 +59,11 @@ class AccessControlPermission(BasePermission):
         if role_has_access(request, feature, method):
             return True
         return False
-    
+
     def has_object_permission(self, request, view, obj):
         # grant access if the requestor is superuser or of the same organization
         payload = request.auth.payload
-        organization_id = payload['organization_id']
+        organization_id = payload["organization_id"]
         if obj.organization.uuid == organization_id:
             return True
         return False
