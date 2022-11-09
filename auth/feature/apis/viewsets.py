@@ -4,6 +4,6 @@ from feature.models import Feature
 
 
 class FeatureViewSet(viewsets.ModelViewSet):
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
     queryset = Feature.objects.all()
     serializer_class = FeatureSerializer

@@ -17,17 +17,17 @@ class MyTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         token = super().post(request, *args, **kwargs)
         JWTA = JWTAuthentication()
-        access_token = AccessToken(token.data['access'])
+        access_token = AccessToken(token.data["access"])
         user = JWTA.get_user(access_token.payload)
-        user_serializer = UserSerializer(user, context={'request': request})
+        user_serializer = UserSerializer(user, context={"request": request})
         data = user_serializer.data
-        data['refresh'] = token.data['refresh']
-        data['access'] = token.data['access']
+        data["refresh"] = token.data["refresh"]
+        data["access"] = token.data["access"]
         return Response(data, status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -36,9 +36,9 @@ class UserViewSet(viewsets.ModelViewSet):
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
         if not user.is_superuser:
-            req_data.pop('organization_id')
+            req_data.pop("organization_id")
             organization_id = user.organization_id
-            req_data['organization_id'] = organization_id
+            req_data["organization_id"] = organization_id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -47,15 +47,15 @@ class UserViewSet(viewsets.ModelViewSet):
         roles = [str(role) for role in role_objects]
         refresh = RefreshToken.for_user(user)
         if user.organization:
-            refresh['organization_id'] = str(user.organization.uuid)
-        refresh['user_id'] = str(user.uuid)
-        refresh['roles'] = roles
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
+            refresh["organization_id"] = str(user.organization.uuid)
+        refresh["user_id"] = str(user.uuid)
+        refresh["roles"] = roles
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
         return Response(data, status=status.HTTP_201_CREATED)
 
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
     queryset = Role.objects.all()
     serializer_class = RoleSerializer

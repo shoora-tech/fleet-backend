@@ -6,28 +6,28 @@ from rest_framework.reverse import reverse
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='uuid')
+    id = serializers.ReadOnlyField(source="uuid")
     features = FeatureSerializer(many=True, read_only=True)
     feature_ids = serializers.ListField(
-        child=serializers.UUIDField(),
-        write_only=True,
-        required=False
+        child=serializers.UUIDField(), write_only=True, required=False
     )
+
     class Meta:
         model = Organization
         fields = (
-            'id',
-            'name',
-            'address',
-            'contact_code',
-            'contact_number',
-            'email',
-            'registration_number',
-            'is_active',
-            'features',
-            'feature_ids',
-            'image',
+            "id",
+            "name",
+            "address",
+            "contact_code",
+            "contact_number",
+            "email",
+            "registration_number",
+            "is_active",
+            "features",
+            "feature_ids",
+            "image",
         )
+
     # def validate_contact_code(self):
     #     pass
     def create(self, validated_data):
@@ -36,4 +36,3 @@ class OrganizationSerializer(serializers.ModelSerializer):
         features = Feature.objects.filter(uuid__in=feature_ids)
         organization.features.add(*features)
         return organization
-

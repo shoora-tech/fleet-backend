@@ -17,15 +17,18 @@ class Driver(models.Model):
     driving_license_number = models.CharField(max_length=15)
     driving_license_validity = models.DateField()
     driver_score = models.IntegerField(max_length=3)
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, blank=True, null=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, blank=True, null=True)
+    vehicle = models.ForeignKey(
+        Vehicle, on_delete=models.CASCADE, blank=True, null=True
+    )
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, blank=True, null=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def __str__(self):
         return self.name
-    
+
     def get_driver_vehicle_history(self):
         # this will return the data containing all the vehicles along with their duration a driver was assigned to
         return self.drive_history.all()
@@ -35,8 +38,12 @@ class DriveHistory(models.Model):
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name="drive_history")
-    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name="drive_history")
+    driver = models.ForeignKey(
+        Driver, on_delete=models.CASCADE, related_name="drive_history"
+    )
+    vehicle = models.ForeignKey(
+        Vehicle, on_delete=models.CASCADE, related_name="drive_history"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
