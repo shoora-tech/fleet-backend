@@ -7,25 +7,43 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('user', '0001_initial'),
+        ("user", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Method',
+            name="Method",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID')),
-                ('name', models.CharField(max_length=10)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="UUID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=10)),
             ],
         ),
         migrations.RemoveField(
-            model_name='accesscontrol',
-            name='action',
+            model_name="accesscontrol",
+            name="action",
         ),
         migrations.AddField(
-            model_name='accesscontrol',
-            name='method',
-            field=models.ManyToManyField(related_name='access_controls', to='user.Method'),
+            model_name="accesscontrol",
+            name="method",
+            field=models.ManyToManyField(
+                related_name="access_controls", to="user.Method"
+            ),
         ),
     ]
