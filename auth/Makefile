@@ -15,3 +15,9 @@ startapp:
 
 containers:
 	docker-compose up
+
+format:
+	black * --force-exclude="Makefile|.txt"
+
+lint:
+	black * --force-exclude="Makefile|.txt" --check
