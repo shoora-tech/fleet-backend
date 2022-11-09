@@ -4,10 +4,11 @@ from rest_framework.reverse import reverse
 
 
 class VehicleSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='uuid')
+    id = serializers.ReadOnlyField(source="uuid")
+
     class Meta:
         model = Vehicle
         fields = (
-            'id',
-            'vin',
+            "id",
+            "vin",
         )

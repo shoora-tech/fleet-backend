@@ -7,14 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organization', '0001_initial'),
-        ('driver', '0001_initial'),
+        ("organization", "0001_initial"),
+        ("driver", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='driver',
-            name='organization',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='organization.organization'),
+            model_name="driver",
+            name="organization",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="organization.organization",
+            ),
         ),
     ]

@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 
 from organization.models import Organization
 from feature.models import Feature
+
 # Create your models here.
 
 
@@ -13,17 +14,16 @@ class MyAccountManager(BaseUserManager):
         if not email:
             raise ValueError("users must have an Email")
 
-        
         user = self.model(
             email=self.normalize_email(email),
-            name=email.split('@')[0],
+            name=email.split("@")[0],
             contact_code=91,
             contact_number=1234567890,
-            )
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
+
     def create_superuser(self, email, password):
         user = self.create_user(email, password)
         user.is_admin = True
@@ -43,7 +43,14 @@ class User(AbstractBaseUser):
     contact_code = models.IntegerField()
     contact_number = models.IntegerField()
     email = models.EmailField(unique=True)
-    organization = models.ForeignKey(Organization, blank=True, null=True, verbose_name=_("Organization"), related_name="users" ,on_delete=models.CASCADE)
+    organization = models.ForeignKey(
+        Organization,
+        blank=True,
+        null=True,
+        verbose_name=_("Organization"),
+        related_name="users",
+        on_delete=models.CASCADE,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -57,10 +64,10 @@ class User(AbstractBaseUser):
 
     def __str__(self) -> str:
         return self.email or self.phone_number
-    
+
     def has_perm(self, perm, obj=None):
         return self.is_admin
-    
+
     def has_module_perms(self, app_label):
         return self.is_admin
 
@@ -90,7 +97,8 @@ class AccessControl(models.Model):
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
-    feature = models.ForeignKey(Feature, verbose_name=_("feature"), on_delete=models.CASCADE)
+    feature = models.ForeignKey(
+        Feature, verbose_name=_("feature"), on_delete=models.CASCADE
+    )
     role = models.ForeignKey(Role, verbose_name=_("role"), on_delete=models.CASCADE)
     method = models.ManyToManyField(Method, related_name="access_controls")
-

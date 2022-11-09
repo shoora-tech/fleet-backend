@@ -3,10 +3,11 @@ from feature.models import Feature
 
 
 class FeatureSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='uuid')
+    id = serializers.ReadOnlyField(source="uuid")
+
     class Meta:
         model = Feature
         fields = (
-            'id',
-            'name',
+            "id",
+            "name",
         )

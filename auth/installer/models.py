@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import User
 from organization.models import Organization
+
 # Create your models here.
 
 # class Installer(User):

@@ -14,7 +14,7 @@ class JWTAccessControlAuthentication(authentication.BaseAuthentication):
         response = JWT_authenticator.authenticate(request)
         if response is not None:
             # unpacking
-            user , token = response
+            user, token = response
             return (user, None)
             # check if user has permission
             # print("this is decoded token claims", token.payload)

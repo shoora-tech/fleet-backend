@@ -2,7 +2,9 @@ from django.db import models
 from uuid import uuid4
 
 from organization.models import Organization
+
 # Create your models here.
+
 
 class DeviceType(models.Model):
     uuid = models.UUIDField(
@@ -23,19 +25,21 @@ class Device(models.Model):
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
     imei_number = models.CharField(max_length=20)
     sim_number = models.IntegerField()
-    activation_date = models.DateTimeField(blank=True, null=True) # this will be automatically populated when 
-                                                                  # this device is linked to any vehicle
+    activation_date = models.DateTimeField(
+        blank=True, null=True
+    )  # this will be automatically populated when
+    # this device is linked to any vehicle
     last_device_status_timestamp = models.DateTimeField(blank=True, null=True)
     is_assigned_to_vehicle = models.BooleanField(default=False)
-    orgnaization = models.ForeignKey(Organization, on_delete=models.SET_NULL, blank=True, null=True)
+    orgnaization = models.ForeignKey(
+        Organization, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     def __str__(self):
         return self.imei_number
-
 
 
 # o1 -> 25
@@ -45,4 +49,3 @@ class Device(models.Model):
 
 # i1 --> [o1, o2]
 # i2 --> [o3, o4]
-

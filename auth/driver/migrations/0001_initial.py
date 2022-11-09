@@ -11,37 +11,98 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('vehicle', '0001_initial'),
+        ("vehicle", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Driver',
+            name="Driver",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID')),
-                ('name', models.CharField(max_length=100)),
-                ('image', models.ImageField(blank=True, null=True, upload_to=auth.storage.get_image_upload_path)),
-                ('phone_number', models.IntegerField()),
-                ('passport_number', models.CharField(max_length=8)),
-                ('passport_validity', models.DateField()),
-                ('driving_license_number', models.CharField(max_length=15)),
-                ('driving_license_validity', models.DateField()),
-                ('driver_score', models.IntegerField(max_length=3)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('vehicle', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='vehicle.vehicle')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="UUID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=auth.storage.get_image_upload_path,
+                    ),
+                ),
+                ("phone_number", models.IntegerField()),
+                ("passport_number", models.CharField(max_length=8)),
+                ("passport_validity", models.DateField()),
+                ("driving_license_number", models.CharField(max_length=15)),
+                ("driving_license_validity", models.DateField()),
+                ("driver_score", models.IntegerField(max_length=3)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "vehicle",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="vehicle.vehicle",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DriveHistory',
+            name="DriveHistory",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('driver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='drive_history', to='driver.driver')),
-                ('vehicle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='drive_history', to='vehicle.vehicle')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="UUID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "driver",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="drive_history",
+                        to="driver.driver",
+                    ),
+                ),
+                (
+                    "vehicle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="drive_history",
+                        to="vehicle.vehicle",
+                    ),
+                ),
             ],
         ),
     ]
