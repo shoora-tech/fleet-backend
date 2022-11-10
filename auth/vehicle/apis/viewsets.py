@@ -11,14 +11,12 @@ class VehicleViewSet(viewsets.ModelViewSet):
     serializer_class = VehicleSerializer
     # permission_classes = [AccessControlPermission]
 
-
-
     def get_queryset(self):
         payload = self.request.auth.payload
         JWTA = JWTAuthentication()
         user = JWTA.get_user(payload)
         if user.is_superuser:
             return self.queryset
-        organization_id = payload['organization_id']
+        organization_id = payload["organization_id"]
         qs = self.queryset.filter(organization__uuid=organization_id)
         return qs

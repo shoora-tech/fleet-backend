@@ -77,6 +77,9 @@ class Role(models.Model):
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
     name = models.CharField(max_length=100)
+    display_name = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name="Display Name"
+    )
     description = models.TextField()
 
     def __str__(self):
