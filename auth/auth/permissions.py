@@ -63,6 +63,10 @@ class AccessControlPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
         # grant access if the requestor is superuser or of the same organization
         payload = request.auth.payload
+        JWTA = JWTAuthentication()
+        user = JWTA.get_user(payload)
+        if user.is_superuser:
+            return True
         organization_id = payload["organization_id"]
         if obj.organization.uuid == organization_id:
             return True
