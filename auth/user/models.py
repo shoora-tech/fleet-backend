@@ -51,12 +51,16 @@ class User(AbstractBaseUser):
         related_name="users",
         on_delete=models.CASCADE,
     )
+    installer_organizations = models.ManyToManyField(
+        Organization, related_name="installers"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_installer = models.BooleanField(default=False)
     roles = models.ManyToManyField("role", related_name="users", blank=True, null=True)
 
     USERNAME_FIELD = "email"
