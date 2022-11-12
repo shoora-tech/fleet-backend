@@ -69,6 +69,6 @@ class AccessControlPermission(BasePermission):
             return True
         organization_id = payload["organization_id"]
 
-        if str(obj.organization.uuid) == organization_id:
+        if str(obj.uuid) == organization_id:
             return True
         return False

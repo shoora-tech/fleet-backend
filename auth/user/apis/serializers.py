@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from user.models import User, Role
+from user.models import User, Role, AccessControl, Method
 from organization.models import Organization
+from feature.apis.serializers import FeatureSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.reverse import reverse
 
@@ -31,6 +32,21 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "display_name", "description")
 
 
+class MethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Method
+        fields = ("name",)
+
+
+class AccessControlSerializer(serializers.ModelSerializer):
+    feature = serializers.StringRelatedField()
+    actions = serializers.StringRelatedField(source="method", many=True)
+
+    class Meta:
+        model = AccessControl
+        fields = ("feature", "actions")
+
+
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
     url = serializers.HyperlinkedIdentityField(
@@ -46,15 +62,17 @@ class UserSerializer(serializers.ModelSerializer):
     roles = RoleSerializer(read_only=True, many=True)
     organization_url = serializers.HyperlinkedRelatedField(
         source="organization",
-        # queryset = Organization.objects.all(),
         view_name="organizations-detail",
         lookup_field="uuid",
         read_only=True,
     )
+    allowed_features = serializers.SerializerMethodField()
     roles_url = serializers.SerializerMethodField()
     features_url = serializers.SerializerMethodField()
     vehicles_url = serializers.SerializerMethodField()
     drivers_url = serializers.SerializerMethodField()
+    access_token_url = serializers.SerializerMethodField()
+    refresh_token_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -76,6 +94,9 @@ class UserSerializer(serializers.ModelSerializer):
             "features_url",
             "vehicles_url",
             "drivers_url",
+            "access_token_url",
+            "refresh_token_url",
+            "allowed_features",
         )
 
     def create(self, validated_data):
@@ -88,14 +109,27 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-    def get_roles_url(self, org):
+    def get_roles_url(self, user):
         return reverse("roles-list", request=self.context["request"])
 
-    def get_features_url(self, org):
+    def get_features_url(self, user):
         return reverse("features-list", request=self.context["request"])
 
-    def get_vehicles_url(self, org):
+    def get_vehicles_url(self, user):
         return reverse("vehicles-list", request=self.context["request"])
 
-    def get_drivers_url(self, org):
+    def get_drivers_url(self, user):
         return reverse("drivers-list", request=self.context["request"])
+
+    def get_access_token_url(self, user):
+        return reverse("token_obtain_pair", request=self.context["request"])
+
+    def get_refresh_token_url(self, user):
+        return reverse("token_refresh", request=self.context["request"])
+
+    def get_allowed_features(self, user):
+        # get all roles for that user, and fetch all the access controls for him
+        roles = user.roles.all()
+        ac = AccessControl.objects.filter(role__in=roles)
+        acs = AccessControlSerializer(ac, many=True)
+        return acs.data
