@@ -68,7 +68,10 @@ class AccessControlPermission(BasePermission):
         if user.is_superuser:
             return True
         organization_id = payload["organization_id"]
-
-        if str(obj.uuid) == organization_id:
-            return True
+        if view.basename == "organizations":
+            if str(obj.uuid) == organization_id:
+                return True
+        else:
+            if str(obj.organization.uuid) == organization_id:
+                return True
         return False
