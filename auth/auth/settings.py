@@ -36,15 +36,18 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # pre installed packages
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # custom packages
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
+    # Shoora modules
     "feature",
     "organization",
     "user",

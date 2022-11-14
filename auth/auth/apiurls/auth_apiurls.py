@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from vehicle.apis.viewsets import VehicleViewSet
 
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="users")
