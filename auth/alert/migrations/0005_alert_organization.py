@@ -7,14 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('organization', '0001_initial'),
-        ('alert', '0004_alert_uuid'),
+        ("organization", "0001_initial"),
+        ("alert", "0004_alert_uuid"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='alert',
-            name='organization',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='organization.organization'),
+            model_name="alert",
+            name="organization",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="organization.organization",
+            ),
         ),
     ]

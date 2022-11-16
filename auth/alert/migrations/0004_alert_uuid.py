@@ -7,13 +7,15 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alert', '0003_alter_alert_identifier'),
+        ("alert", "0003_alter_alert_identifier"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='alert',
-            name='uuid',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID'),
+            model_name="alert",
+            name="uuid",
+            field=models.UUIDField(
+                default=uuid.uuid4, editable=False, unique=True, verbose_name="UUID"
+            ),
         ),
     ]

@@ -9,34 +9,62 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Location',
+            name="Location",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('latitude', models.IntegerField()),
-                ('longitude', models.IntegerField()),
-                ('height', models.IntegerField()),
-                ('speed', models.IntegerField()),
-                ('direction', models.CharField(max_length=25)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("latitude", models.IntegerField()),
+                ("longitude", models.IntegerField()),
+                ("height", models.IntegerField()),
+                ("speed", models.IntegerField()),
+                ("direction", models.CharField(max_length=25)),
             ],
         ),
         migrations.CreateModel(
-            name='Alert',
+            name="Alert",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifier', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID')),
-                ('location_packet_type', models.CharField(max_length=25)),
-                ('message_body_length', models.CharField(max_length=25)),
-                ('imei', models.CharField(max_length=25)),
-                ('message_serial_number', models.IntegerField()),
-                ('alarm_series', models.IntegerField()),
-                ('terminal_status', models.BooleanField(default=False)),
-                ('ignition_status', models.BooleanField(default=False)),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='alert.location')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="UUID",
+                    ),
+                ),
+                ("location_packet_type", models.CharField(max_length=25)),
+                ("message_body_length", models.CharField(max_length=25)),
+                ("imei", models.CharField(max_length=25)),
+                ("message_serial_number", models.IntegerField()),
+                ("alarm_series", models.IntegerField()),
+                ("terminal_status", models.BooleanField(default=False)),
+                ("ignition_status", models.BooleanField(default=False)),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="alert.location"
+                    ),
+                ),
             ],
         ),
     ]
