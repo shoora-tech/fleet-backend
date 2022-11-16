@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from alert.models import Alert
+from alert.models import RealTimeDatabase
 from organization.apis.serializers import OrganizationSerializer
 
 class AlertSerializer(serializers.ModelSerializer):
@@ -7,7 +7,7 @@ class AlertSerializer(serializers.ModelSerializer):
     organization = OrganizationSerializer(read_only=True)
 
     class meta:
-        model = Alert
+        model = RealTimeDatabase
         fields = (
             'id',
             'identifier',

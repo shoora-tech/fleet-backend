@@ -7,7 +7,7 @@ from organization.models import Organization
 
  
 
-class Alert(models.Model):
+class RealTimeDatabase(models.Model):
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
