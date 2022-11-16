@@ -1,12 +1,12 @@
 from rest_framework import viewsets
 from .serializers import AlertSerializer
-from alert.models import Alert
+from alert.models import RealTimeDatabase
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class AlertViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
-    queryset = Alert.objects.all()
+    queryset = RealTimeDatabase.objects.all()
     serializer_class = AlertSerializer
 
     def get_queryset(self):
