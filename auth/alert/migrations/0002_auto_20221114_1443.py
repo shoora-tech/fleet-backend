@@ -6,40 +6,40 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alert', '0001_initial'),
+        ("alert", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='alert',
-            name='location',
+            model_name="alert",
+            name="location",
         ),
         migrations.AddField(
-            model_name='alert',
-            name='direction',
+            model_name="alert",
+            name="direction",
             field=models.CharField(blank=True, max_length=25, null=True),
         ),
         migrations.AddField(
-            model_name='alert',
-            name='height',
+            model_name="alert",
+            name="height",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='alert',
-            name='latitude',
+            model_name="alert",
+            name="latitude",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='alert',
-            name='longitude',
+            model_name="alert",
+            name="longitude",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='alert',
-            name='speed',
+            model_name="alert",
+            name="speed",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.DeleteModel(
-            name='Location',
+            name="Location",
         ),
     ]
