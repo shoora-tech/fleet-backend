@@ -3,10 +3,14 @@ from django.urls import path, include
 
 from vehicle.apis.viewsets import VehicleViewSet
 from driver.apis.viewsets import DriverViewSet
+from device.apis.viewsets import DeviceViewSet
+
 
 router = DefaultRouter()
 router.register("vehicles", VehicleViewSet, basename="vehicles")
 router.register("drivers", DriverViewSet, basename="drivers")
+router.register("devices", DeviceViewSet, basename="devices")
+
 
 urlpatterns = [
     path("", include(router.urls)),
