@@ -4,7 +4,6 @@ from .serializers import DeviceSerializer
 from device.models import Device
 
 
-
 class DeviceViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     queryset = Device.objects.all()

@@ -33,6 +33,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         req_data = request.data.copy()
+        # raise error if password field is missing
+        password = req_data.get("password", None)
+        if not password:
+            return Response(
+                {"detail": "Password can not be empty!!"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
         if not user.is_superuser:
