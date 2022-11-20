@@ -97,16 +97,16 @@ class UserSerializer(serializers.ModelSerializer):
             "allowed_features",
         )
 
-    # def to_representation(self, user):
-    #     data = super().to_representation(user)
-    #     x = [str(role['id']) for role in data['roles']]
-    #     data["role_ids"] = x
-    #     return data
+    def to_representation(self, user):
+        data = super().to_representation(user)
+        x = [str(role["id"]) for role in data["roles"]]
+        data["role_ids"] = x
+        return data
 
     def create(self, validated_data):
         print("validated data --> ", validated_data)
         role_ids = validated_data.pop("role", None)
-        user = super().create(validated_data)
+        user = User.objects.create(**validated_data)
         user.set_password(validated_data["password"])
         if role_ids:
             role_ids = role_ids.pop("uuid")
