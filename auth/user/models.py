@@ -41,7 +41,7 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=100)
     address = models.TextField()
     contact_code = models.IntegerField()
-    contact_number = models.IntegerField()
+    contact_number = models.BigIntegerField()
     email = models.EmailField(unique=True)
     organization = models.ForeignKey(
         Organization,
