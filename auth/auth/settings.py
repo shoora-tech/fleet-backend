@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "device",
     "vehicle",
     "driver",
+    "alert",
 ]
 
 MIDDLEWARE = [
