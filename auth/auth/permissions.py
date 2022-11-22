@@ -30,7 +30,7 @@ def role_has_access(request, feature, method):
         return False
     if organization_has_access_to_feature(organization_id, feature):
         try:
-            AccessControl.objects.get(
+            AccessControl.objects.filter(
                 role__uuid__in=roles, method__in=[method.pk], feature=feature
             )
             return True

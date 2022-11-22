@@ -22,6 +22,8 @@ class Organization(models.Model):
     is_active = models.BooleanField(default=True)
     is_deleted = models.BooleanField(default=False)
     image = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
+    chinese_server_username = models.CharField(max_length=20, blank=True, null=True)
+    chinese_server_password = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
