@@ -1,14 +1,13 @@
 from rest_framework import viewsets
+from .serializers import AlertSerializer
+from alert.models import RealTimeDatabase
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from auth.permissions import AccessControlPermission
-from .serializers import VehicleSerializer
-from vehicle.models import Vehicle
 
 
-class VehicleViewSet(viewsets.ModelViewSet):
+class AlertViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
-    queryset = Vehicle.objects.all()
-    serializer_class = VehicleSerializer
+    queryset = RealTimeDatabase.objects.all()
+    serializer_class = AlertSerializer
 
     def get_queryset(self):
         payload = self.request.auth.payload

@@ -76,6 +76,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "id",
+            "created_at",
             "url",
             "name",
             "address",
@@ -104,13 +105,23 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        print("validated data --> ", validated_data)
         role_ids = validated_data.pop("role", None)
         user = User.objects.create(**validated_data)
         user.set_password(validated_data["password"])
         if role_ids:
             role_ids = role_ids.pop("uuid")
             roles = Role.objects.filter(uuid__in=role_ids)
+            user.roles.add(*roles)
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        role_ids = validated_data.pop("role", None)
+        user = super().update(instance=instance, validated_data=validated_data)
+        if role_ids:
+            role_ids = role_ids.pop("uuid")
+            roles = Role.objects.filter(uuid__in=role_ids)
+            user.roles.clear()
             user.roles.add(*roles)
         user.save()
         return user

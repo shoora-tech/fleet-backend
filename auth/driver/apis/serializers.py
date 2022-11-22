@@ -8,6 +8,9 @@ from rest_framework.reverse import reverse
 
 class DriverSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="drivers-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
+    )
     vehicle = VehicleSerializer(read_only=True)
     organization = OrganizationSerializer(read_only=True)
 
@@ -15,6 +18,7 @@ class DriverSerializer(serializers.ModelSerializer):
         model = Driver
         fields = (
             "id",
+            "url",
             "name",
             "phone_number",
             "passport_number",
