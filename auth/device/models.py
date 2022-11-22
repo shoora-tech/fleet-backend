@@ -31,7 +31,7 @@ class Device(models.Model):
     # this device is linked to any vehicle
     last_device_status_timestamp = models.DateTimeField(blank=True, null=True)
     is_assigned_to_vehicle = models.BooleanField(default=False)
-    orgnaization = models.ForeignKey(
+    organization = models.ForeignKey(
         Organization, on_delete=models.SET_NULL, blank=True, null=True
     )
 

@@ -7,6 +7,9 @@ from rest_framework.reverse import reverse
 
 class OrganizationSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="organizations-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
+    )
     features = FeatureSerializer(many=True, read_only=True)
     feature_ids = serializers.ListField(
         child=serializers.UUIDField(), write_only=True, required=False
@@ -16,6 +19,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         model = Organization
         fields = (
             "id",
+            "url",
             "name",
             "address",
             "contact_code",

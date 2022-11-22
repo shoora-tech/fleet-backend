@@ -9,7 +9,6 @@ class VehicleViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
-    # permission_classes = [AccessControlPermission]
 
     def get_queryset(self):
         payload = self.request.auth.payload

@@ -8,13 +8,16 @@ from rest_framework.reverse import reverse
 
 class VehicleSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
-    # vehicle_type = VehicleSerializer(read_only=True)
+    url = serializers.HyperlinkedIdentityField(
+        view_name="vehicles-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
+    )
     organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = Vehicle
         fields = (
             "id",
+            "url",
             "make",
             "model",
             "vin",
