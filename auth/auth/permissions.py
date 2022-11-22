@@ -14,7 +14,6 @@ def organization_has_access_to_feature(organization_id, feature):
             feature = organization.features.all().filter(name=feature.name)
             if feature:
                 return True
-            print("no feature")
             return False
         except Feature.DoesNotExist:
             return False
@@ -28,7 +27,6 @@ def role_has_access(request, feature, method):
     roles = payload["roles"]
 
     if organization_id == None:
-        print("no org")
         return False
     if organization_has_access_to_feature(organization_id, feature):
         try:
@@ -52,12 +50,10 @@ class AccessControlPermission(BasePermission):
         try:
             feature = Feature.objects.get(name=view.basename)
         except Feature.DoesNotExist:
-            print("no feature")
             return False
         try:
             method = Method.objects.get(name=request.method)
         except Method.DoesNotExist:
-            print("no method")
             return False
         if role_has_access(request, feature, method):
             return True
@@ -65,7 +61,6 @@ class AccessControlPermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # grant access if the requestor is superuser or of the same organization
-        print("obj perm")
         payload = request.auth.payload
         JWTA = JWTAuthentication()
         user = JWTA.get_user(payload)
