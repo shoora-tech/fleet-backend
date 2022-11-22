@@ -147,6 +147,8 @@ class UserSerializer(serializers.ModelSerializer):
     def get_allowed_features(self, user):
         # get all roles for that user, and fetch all the access controls for him
         roles = user.roles.all()
-        ac = AccessControl.objects.filter(role__in=roles)
+        ac = AccessControl.objects.filter(role__in=roles).exclude(
+            feature__name__in=["organizations", "devices"]
+        )
         acs = AccessControlSerializer(ac, many=True)
         return acs.data
