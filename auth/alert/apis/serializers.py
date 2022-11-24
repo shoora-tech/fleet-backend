@@ -7,7 +7,7 @@ class AlertSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
     organization = OrganizationSerializer(read_only=True)
 
-    class meta:
+    class Meta:
         model = RealTimeDatabase
         fields = (
             "id",
@@ -23,6 +23,6 @@ class AlertSerializer(serializers.ModelSerializer):
             "longitude",
             "height",
             "speed",
-            "directions",
-            "oraganization",
+            "direction",
+            "organization",
         )
