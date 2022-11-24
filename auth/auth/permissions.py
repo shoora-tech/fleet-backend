@@ -6,6 +6,7 @@ from user.models import AccessControl
 from feature.models import Feature
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+
 def organization_has_access_to_feature(organization_id, feature):
     try:
         organization = Organization.objects.get(uuid=organization_id)
