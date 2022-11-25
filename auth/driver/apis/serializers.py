@@ -11,8 +11,11 @@ class DriverSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="drivers-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
     )
+    organization_id = serializers.SlugRelatedField(
+        queryset=Organization.objects.all(), slug_field="uuid", source="organization"
+    )
     vehicle = VehicleSerializer(read_only=True)
-    organization = OrganizationSerializer(read_only=True)
+    # organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = Driver
@@ -20,6 +23,7 @@ class DriverSerializer(serializers.ModelSerializer):
             "id",
             "url",
             "name",
+            "organization_id",
             "phone_number",
             "passport_number",
             "passport_validity",
@@ -27,5 +31,5 @@ class DriverSerializer(serializers.ModelSerializer):
             "driving_license_validity",
             "driver_score",
             "vehicle",
-            "organization",
+            # "organization",
         )
