@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from alert.models import RealTimeDatabase
+from alert.models import Alarm
 from organization.apis.serializers import OrganizationSerializer
 
 
@@ -26,3 +27,17 @@ class AlertSerializer(serializers.ModelSerializer):
             "direction",
             "organization",
         )
+
+
+        model = Alarm
+        fields = (
+            "asset_id",
+            "driver",
+            "event_type",
+            "date_time",
+            "severity",
+            "event_location",
+            "actions",
+        )
+    
+

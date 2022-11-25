@@ -1,6 +1,7 @@
 from django.db import models
 from uuid import UUID, uuid4
 from organization.models import Organization
+from driver.models import Driver
 
 # Create your models here.
 
@@ -25,3 +26,20 @@ class RealTimeDatabase(models.Model):
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, blank=True, null=True
     )
+
+
+severity_choices = (
+    ('Low','Low'),
+    ('Medium','Medium'),
+    ('High', 'High')
+)
+
+class Alarm(models.Model):
+    asset_id = models.CharField(max_length=10)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, blank=True, null=True)
+    event_type = models.CharField(max_length=50)
+    date_time = models.DateTimeField(auto_now=True)
+    severity = models.CharField(max_length=25, blank=True, null=True,choices=severity_choices)
+    event_location = models.CharField(max_length=80, blank=True, null=True)
+    actions = models.TextField(help_text="View/Comment", max_length=150, blank=True, null=True)
+    
