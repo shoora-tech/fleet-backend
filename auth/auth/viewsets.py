@@ -1,5 +1,7 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class BaseViewSet(viewsets.ModelViewSet):
@@ -15,3 +17,13 @@ class BaseViewSet(viewsets.ModelViewSet):
             qs = self.queryset.filter(organization__uuid=organization_id)
             return qs.order_by("-created_at")
         return qs
+
+    def create(self, request, *args, **kwargs):
+        req_data = request.data.copy()
+        payload = self.request.auth.payload
+        organization_id = payload["organization_id"]
+        req_data["organization_id"] = organization_id
+        serializer = self.get_serializer(data=req_data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
