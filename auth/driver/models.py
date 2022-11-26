@@ -11,7 +11,7 @@ class Driver(models.Model):
     )
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
-    phone_number = models.IntegerField()
+    phone_number = models.BigIntegerField()
     passport_number = models.CharField(max_length=8)
     passport_validity = models.DateField()
     driving_license_number = models.CharField(max_length=15)

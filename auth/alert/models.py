@@ -1,5 +1,5 @@
 from django.db import models
-from uuid import UUID, uuid4
+from uuid import uuid4
 from organization.models import Organization
 from driver.models import Driver
 

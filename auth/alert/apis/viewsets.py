@@ -2,22 +2,14 @@ from rest_framework import viewsets
 from .serializers import AlertSerializer
 from alert.models import RealTimeDatabase
 from alert.models import Alarm
+from auth.viewsets import BaseViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
-class AlertViewSet(viewsets.ModelViewSet):
+class AlertViewSet(BaseViewSet):
     lookup_field = "uuid"
     queryset = RealTimeDatabase.objects.all()
     queryset = Alarm.objects.all()
-
     serializer_class = AlertSerializer
 
-    def get_queryset(self):
-        payload = self.request.auth.payload
-        JWTA = JWTAuthentication()
-        user = JWTA.get_user(payload)
-        if user.is_superuser:
-            return self.queryset
-        organization_id = payload["organization_id"]
-        qs = self.queryset.filter(organization__uuid=organization_id)
-        return qs
+    
