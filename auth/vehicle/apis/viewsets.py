@@ -12,17 +12,17 @@ class VehicleViewSet(BaseViewSet):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
 
-class VehicleMakeViewSet(BaseViewSet):
+class VehicleMakeViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     queryset = VehicleMake.objects.all()
     serializer_class = VehicleMakeSerializer
 
-class VehicleModelViewSet(BaseViewSet):
+class VehicleModelViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     queryset = VehicleModel.objects.all()
     serializer_class = VehicleModelSerializer 
 
-class VehicleTypeViewSet(BaseViewSet):
+class VehicleTypeViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     queryset = VehicleType.objects.all()
     serializer_class = VehicleTypeSerializer      

@@ -8,9 +8,9 @@ from alert.apis.viewsets import AlertViewSet
 
 router = DefaultRouter()
 router.register("vehicles", VehicleViewSet, basename="vehicles")
-router.register("vehicles", VehicleMakeViewSet, basename="vehiclemakes")
-router.register("vehicles", VehicleModelViewSet, basename="vehiclemodels")
-router.register("vehicles", VehicleTypeViewSet, basename="vehicletypes")
+router.register("vehicle-makes", VehicleMakeViewSet, basename="vehiclemakes")
+router.register("vehicle-models", VehicleModelViewSet, basename="vehiclemodels")
+router.register("vehicle-types", VehicleTypeViewSet, basename="vehicletypes")
 router.register("drivers", DriverViewSet, basename="drivers")
 router.register("devices", DeviceViewSet, basename="devices")
 router.register("alerts", AlertViewSet, basename="alerts")

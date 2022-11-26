@@ -35,20 +35,24 @@ class VehicleSerializer(serializers.ModelSerializer):
         )
 
 class VehicleMakeSerializer(serializers.ModelSerializer):
-    class Meta: VehicleMake
-    fields = (
+    class Meta: 
+        model =VehicleMake
+
+        fields = (
         "name",
-    )
+        )
 
 class VehicleModelSerializer(serializers.ModelSerializer):
-    class Meta: VehicleModel
-    fields = (
-        "name",
-        "vehicle_make",
-    )
+    class Meta:
+        model= VehicleModel
+        fields = (
+            "name",
+            "vehicle_make",
+        )
 
 class VehicleTypeSerializer(serializers.ModelSerializer):
-    class Meta: VehicleType
-    fields = (
-        "name",
-    )
+    class Meta: 
+        model=VehicleType
+        fields = (
+            "name",
+        )

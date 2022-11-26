@@ -68,6 +68,9 @@ class UserSerializer(serializers.ModelSerializer):
     roles_url = serializers.SerializerMethodField()
     features_url = serializers.SerializerMethodField()
     vehicles_url = serializers.SerializerMethodField()
+    vehicle_makes_url = serializers.SerializerMethodField()
+    vehicle_models_url = serializers.SerializerMethodField()
+    vehicle_types_url = serializers.SerializerMethodField()
     drivers_url = serializers.SerializerMethodField()
     access_token_url = serializers.SerializerMethodField()
     refresh_token_url = serializers.SerializerMethodField()
@@ -92,6 +95,9 @@ class UserSerializer(serializers.ModelSerializer):
             "roles_url",
             "features_url",
             "vehicles_url",
+            "vehicle_makes_url",
+            "vehicle_models_url",
+            "vehicle_types_url",
             "drivers_url",
             "access_token_url",
             "refresh_token_url",
@@ -134,6 +140,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_vehicles_url(self, user):
         return reverse("vehicles-list", request=self.context["request"])
+
+    def get_vehicle_makes_url(self, user):
+        return reverse("vehiclemakes-list", request=self.context["request"])
+
+    def get_vehicle_models_url(self, user):
+        return reverse("vehiclemodels-list", request=self.context["request"])    
+
+    def get_vehicle_types_url(self, user):
+        return reverse("vehicletypes-list", request=self.context["request"])    
+
 
     def get_drivers_url(self, user):
         return reverse("drivers-list", request=self.context["request"])
