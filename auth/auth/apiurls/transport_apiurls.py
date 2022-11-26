@@ -1,13 +1,16 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
-from vehicle.apis.viewsets import VehicleViewSet
+from vehicle.apis.viewsets import VehicleViewSet,VehicleMakeViewSet,VehicleTypeViewSet,VehicleModelViewSet
 from driver.apis.viewsets import DriverViewSet
 from device.apis.viewsets import DeviceViewSet
 from alert.apis.viewsets import AlertViewSet
 
 router = DefaultRouter()
 router.register("vehicles", VehicleViewSet, basename="vehicles")
+router.register("vehicles", VehicleMakeViewSet, basename="vehiclemakes")
+router.register("vehicles", VehicleModelViewSet, basename="vehiclemodels")
+router.register("vehicles", VehicleTypeViewSet, basename="vehicletypes")
 router.register("drivers", DriverViewSet, basename="drivers")
 router.register("devices", DeviceViewSet, basename="devices")
 router.register("alerts", AlertViewSet, basename="alerts")

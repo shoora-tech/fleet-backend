@@ -33,3 +33,22 @@ class VehicleSerializer(serializers.ModelSerializer):
             "vehicle_type",
             "organization",
         )
+
+class VehicleMakeSerializer(serializers.ModelSerializer):
+    class Meta: VehicleMake
+    fields = (
+        "name",
+    )
+
+class VehicleModelSerializer(serializers.ModelSerializer):
+    class Meta: VehicleModel
+    fields = (
+        "name",
+        "vehicle_make",
+    )
+
+class VehicleTypeSerializer(serializers.ModelSerializer):
+    class Meta: VehicleType
+    fields = (
+        "name",
+    )

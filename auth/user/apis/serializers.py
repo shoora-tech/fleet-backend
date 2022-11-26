@@ -135,9 +135,6 @@ class UserSerializer(serializers.ModelSerializer):
     def get_vehicles_url(self, user):
         return reverse("vehicles-list", request=self.context["request"])
 
-    def get_vehicles_url(self, user):
-        return reverse("vehicle-makes","vehicle-models","vehicle-types", request=self.context["request"])
-
     def get_drivers_url(self, user):
         return reverse("drivers-list", request=self.context["request"])
 
