@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 
 from organization.models import Organization
 from feature.models import Feature
+from django.contrib.auth.models import PermissionsMixin
 
 # Create your models here.
 
@@ -33,7 +34,7 @@ class MyAccountManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     contact_code_prefix = "+"
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
@@ -69,12 +70,6 @@ class User(AbstractBaseUser):
     def __str__(self) -> str:
         return self.email or self.phone_number
 
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return self.is_admin
-
 
 class Role(models.Model):
     uuid = models.UUIDField(
@@ -109,3 +104,20 @@ class AccessControl(models.Model):
     )
     role = models.ForeignKey(Role, verbose_name=_("role"), on_delete=models.CASCADE)
     method = models.ManyToManyField(Method, related_name="access_controls")
+
+
+class Installer(User):
+    # objects = InstallerManager()
+    class Meta:
+        proxy = True
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        self.is_installer = True
+        self.is_staff = True
+        if not self.id:
+            self.set_password(self.password)
+        super().save(
+            force_insert=False, force_update=False, using=None, update_fields=None
+        )
