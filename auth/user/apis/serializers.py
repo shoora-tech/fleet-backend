@@ -158,8 +158,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_jsession_data(self, user):
         if not user.is_superuser:
-            username = user.organization.chinese_server_username
-            password = user.organization.chinese_server_password
+            username = user.organization.chinese_server_username or "its"
+            password = user.organization.chinese_server_password or "000000"
         else:
             username = "its"
             password = "000000"
