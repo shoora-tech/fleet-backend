@@ -197,4 +197,23 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIR = (os.path.join(BASE_DIR, "static"),)
 
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+# from celery.schedules import crontab
+
+# CELERY_BEAT_SCHEDULE = {
+#     'hello': {
+#         'task': 'alert.tasks.hello',
+#         'schedule': crontab()  # execute every minute
+#     },
+#     'alert':{
+#         'task': 'alert.tasks.fetch_alerts',
+#         'schedule': crontab(minute='*/10')  # execute every minute
+#     }
+# }
+
 AUTH_USER_MODEL = "user.User"
