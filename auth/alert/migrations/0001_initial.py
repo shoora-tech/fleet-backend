@@ -8,42 +8,73 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Alert',
+            name="Alert",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID')),
-                ('alert_video_url_china', models.TextField()),
-                ('alert_video_url_shoora', models.TextField(blank=True, null=True)),
-                ('device_imei', models.CharField(max_length=20)),
-                ('alert_time_epoch', models.PositiveBigIntegerField()),
-                ('alarm_type', models.IntegerField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="UUID",
+                    ),
+                ),
+                ("alert_video_url_china", models.TextField()),
+                ("alert_video_url_shoora", models.TextField(blank=True, null=True)),
+                ("device_imei", models.CharField(max_length=20)),
+                ("alert_time_epoch", models.PositiveBigIntegerField()),
+                ("alarm_type", models.IntegerField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='RealTimeDatabase',
+            name="RealTimeDatabase",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID')),
-                ('location_packet_type', models.CharField(max_length=25)),
-                ('message_body_length', models.CharField(max_length=25)),
-                ('imei', models.CharField(max_length=25)),
-                ('message_serial_number', models.IntegerField()),
-                ('alarm_series', models.IntegerField()),
-                ('terminal_status', models.BooleanField(default=False)),
-                ('ignition_status', models.BooleanField(default=False)),
-                ('latitude', models.IntegerField(blank=True, null=True)),
-                ('longitude', models.IntegerField(blank=True, null=True)),
-                ('height', models.IntegerField(blank=True, null=True)),
-                ('speed', models.IntegerField(blank=True, null=True)),
-                ('createdAt', models.DateTimeField(auto_now_add=True, null=True)),
-                ('updatedAt', models.DateTimeField(auto_now=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "uuid",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        unique=True,
+                        verbose_name="UUID",
+                    ),
+                ),
+                ("location_packet_type", models.CharField(max_length=25)),
+                ("message_body_length", models.CharField(max_length=25)),
+                ("imei", models.CharField(max_length=25)),
+                ("message_serial_number", models.IntegerField()),
+                ("alarm_series", models.IntegerField()),
+                ("terminal_status", models.BooleanField(default=False)),
+                ("ignition_status", models.BooleanField(default=False)),
+                ("latitude", models.IntegerField(blank=True, null=True)),
+                ("longitude", models.IntegerField(blank=True, null=True)),
+                ("height", models.IntegerField(blank=True, null=True)),
+                ("speed", models.IntegerField(blank=True, null=True)),
+                ("createdAt", models.DateTimeField(auto_now_add=True, null=True)),
+                ("updatedAt", models.DateTimeField(auto_now=True, null=True)),
             ],
         ),
     ]
