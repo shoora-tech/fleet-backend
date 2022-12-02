@@ -6,12 +6,11 @@ from organization.models import Organization
 
 
 class RealTimeDatabase(models.Model):
-    id = models.UUIDField(
+    uuid = models.UUIDField(
         default=uuid4,
         unique=True,
         editable=False,
         verbose_name="UUID",
-        primary_key=True,
     )
     # identifier = models.CharField(max_length=50)
     location_packet_type = models.CharField(max_length=25)
@@ -35,5 +34,18 @@ class RealTimeDatabase(models.Model):
     def __str__(self) -> str:
         return self.imei
 
-    class Meta:
-        db_table = "device_data_details"
+
+class Alert(models.Model):
+    uuid = models.UUIDField(
+        default=uuid4,
+        unique=True,
+        editable=False,
+        verbose_name="UUID",
+    )
+    alert_video_url_china = models.TextField()
+    alert_video_url_shoora = models.TextField(blank=True, null=True)
+    device_imei = models.CharField(max_length=20)
+    alert_time_epoch = models.PositiveBigIntegerField()
+    alarm_type = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
