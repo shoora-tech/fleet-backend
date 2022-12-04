@@ -11,6 +11,9 @@ services:
     depends_on:
       - auth-shoora
       - transport-shoora
+  
+  redis:
+    image: "redis:alpine"
 
   #django app
   auth-shoora:
@@ -44,3 +47,31 @@ services:
       '
     ports:
       - "8001:8000"
+  
+  celery:
+    image: python:3.7
+    volumes:
+      - ./auth:/app
+    command: |
+      sh -c '
+      cd /app
+      pip install --upgrade pip
+      make deps
+      celery -A auth worker -l info
+      '
+    
+    depends_on:
+      - redis
+  celery-beat:
+    image: python:3.7
+    volumes:
+      - ./auth:/app
+    command: |
+      sh -c '
+      cd /app
+      pip install --upgrade pip
+      make deps
+      celery -A auth beat -l info
+      '
+    depends_on:
+      - redis

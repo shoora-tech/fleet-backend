@@ -70,14 +70,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.email or self.phone_number
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        if not self.id:
-            self.set_password(self.password)
-        super().save(
-            force_insert=False, force_update=False, using=None, update_fields=None
-        )
+    # def save(
+    #     self, force_insert=False, force_update=False, using=None, update_fields=None
+    # ):
+    #     print("self password --> ", self.password)
+    #     if not self.id:
+    #         self.set_password(self.password)
+    #     super().save(
+    #         force_insert=False, force_update=False, using=None, update_fields=None
+    #     )
 
 
 class Role(models.Model):
