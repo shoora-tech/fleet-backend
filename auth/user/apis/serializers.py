@@ -4,6 +4,7 @@ from organization.models import Organization
 from feature.apis.serializers import FeatureSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.reverse import reverse
+import requests
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -74,6 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
     drivers_url = serializers.SerializerMethodField()
     access_token_url = serializers.SerializerMethodField()
     refresh_token_url = serializers.SerializerMethodField()
+    jsession_data = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -102,6 +104,7 @@ class UserSerializer(serializers.ModelSerializer):
             "access_token_url",
             "refresh_token_url",
             "allowed_features",
+            "jsession_data",
         )
 
     def to_representation(self, user):
@@ -169,4 +172,20 @@ class UserSerializer(serializers.ModelSerializer):
         acs = AccessControlSerializer(ac, many=True)
         return acs.data
 
-    
+
+    def get_jsession_data(self, user):
+        if not user.is_superuser:
+            username = user.organization.chinese_server_username or "its"
+            password = user.organization.chinese_server_password or "000000"
+        else:
+            username = "its"
+            password = "000000"
+        params = {"account": username, "password": password}
+        op = {}
+        resp = requests.get(
+            "http://dsm.shoora.com/StandardApiAction_login.action", params=params
+        )
+        op["status_code"] = resp.status_code
+        op["data"] = resp.json()
+        return op
+

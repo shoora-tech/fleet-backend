@@ -8,9 +8,12 @@ from driver.models import Driver
 
 class RealTimeDatabase(models.Model):
     uuid = models.UUIDField(
-        default=uuid4, unique=True, editable=False, verbose_name="UUID"
+        default=uuid4,
+        unique=True,
+        editable=False,
+        verbose_name="UUID",
     )
-    identifier = models.CharField(max_length=50)
+    # identifier = models.CharField(max_length=50)
     location_packet_type = models.CharField(max_length=25)
     message_body_length = models.CharField(max_length=25)
     imei = models.CharField(max_length=25)
@@ -22,24 +25,29 @@ class RealTimeDatabase(models.Model):
     longitude = models.IntegerField(blank=True, null=True)
     height = models.IntegerField(blank=True, null=True)
     speed = models.IntegerField(blank=True, null=True)
-    direction = models.CharField(max_length=25, blank=True, null=True)
-    organization = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, blank=True, null=True
+    # direction = models.CharField(max_length=25, blank=True, null=True)
+    # organization = models.ForeignKey(
+    #     Organization, on_delete=models.CASCADE, blank=True, null=True
+    # )
+    createdAt = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updatedAt = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.imei
+
+
+class Alert(models.Model):
+    uuid = models.UUIDField(
+        default=uuid4,
+        unique=True,
+        editable=False,
+        verbose_name="UUID",
     )
+    alert_video_url_china = models.TextField()
+    alert_video_url_shoora = models.TextField(blank=True, null=True)
+    device_imei = models.CharField(max_length=20)
+    alert_time_epoch = models.PositiveBigIntegerField()
+    alarm_type = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-
-severity_choices = (
-    ('Low','Low'),
-    ('Medium','Medium'),
-    ('High', 'High')
-)
-
-class Alarm(models.Model):
-    asset_id = models.CharField(max_length=10)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, blank=True, null=True)
-    event_type = models.CharField(max_length=50)
-    date_time = models.DateTimeField(auto_now=True)
-    severity = models.CharField(max_length=25, blank=True, null=True,choices=severity_choices)
-    event_location = models.CharField(max_length=80, blank=True, null=True)
-    actions = models.TextField(help_text="View/Comment", max_length=150, blank=True, null=True)
-    
