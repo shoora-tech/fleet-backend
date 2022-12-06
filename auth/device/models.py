@@ -24,7 +24,7 @@ class Device(models.Model):
     )
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
     imei_number = models.CharField(max_length=20)
-    sim_number = models.IntegerField()
+    sim_number = models.PositiveBigIntegerField()
     activation_date = models.DateTimeField(
         blank=True, null=True
     )  # this will be automatically populated when

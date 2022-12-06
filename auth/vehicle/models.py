@@ -2,6 +2,8 @@ from django.db import models
 from uuid import uuid4
 from organization.models import Organization
 from device.models import Device
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -61,3 +63,10 @@ class Vehicle(models.Model):
 
     def __str__(self):
         return f"{self.make} --> {self.model}"
+
+@receiver(post_save, sender=Vehicle)
+def update_device_status(sender, instance, created, **kwargs):
+    device = instance.device
+    if device:
+        device.is_assigned_to_vehicle = True
+        device.save()

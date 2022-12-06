@@ -6,6 +6,9 @@ from django.utils.translation import gettext as _
 from organization.models import Organization
 from feature.models import Feature
 from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import Permission
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
@@ -42,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     address = models.TextField()
     contact_code = models.IntegerField()
-    contact_number = models.BigIntegerField()
+    contact_number = models.PositiveBigIntegerField()
     email = models.EmailField(unique=True)
     organization = models.ForeignKey(
         Organization,
@@ -69,16 +72,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.email or self.phone_number
-
-    # def save(
-    #     self, force_insert=False, force_update=False, using=None, update_fields=None
-    # ):
-    #     print("self password --> ", self.password)
-    #     if not self.id:
-    #         self.set_password(self.password)
-    #     super().save(
-    #         force_insert=False, force_update=False, using=None, update_fields=None
-    #     )
 
 
 class Role(models.Model):
@@ -126,8 +119,21 @@ class Installer(User):
     ):
         self.is_installer = True
         self.is_staff = True
-        if not self.id:
-            self.set_password(self.password)
         super().save(
             force_insert=False, force_update=False, using=None, update_fields=None
         )
+
+
+
+@receiver(post_save, sender=Installer)
+def add_installer_permissions(sender, instance, created, **kwargs):
+    print(created)
+    if created:
+        permission = Permission.objects.get(name='Can view vehicle')
+        instance.user_permissions.add(permission)
+        permission = Permission.objects.get(name='Can change vehicle')
+        instance.user_permissions.add(permission)
+        permission = Permission.objects.get(name='Can add vehicle')
+        instance.user_permissions.add(permission)
+        permission = Permission.objects.get(name='Can delete vehicle')
+        instance.user_permissions.add(permission)

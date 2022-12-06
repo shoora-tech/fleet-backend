@@ -3,15 +3,13 @@ from alert.models import RealTimeDatabase
 from organization.apis.serializers import OrganizationSerializer
 
 
-class AlertSerializer(serializers.ModelSerializer):
+class RealTimeDatabaseSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
-    organization = OrganizationSerializer(read_only=True)
 
     class Meta:
         model = RealTimeDatabase
         fields = (
             "id",
-            "identifier",
             "location_packet_type",
             "message_body_length",
             "imei",
@@ -24,5 +22,4 @@ class AlertSerializer(serializers.ModelSerializer):
             "height",
             "speed",
             "direction",
-            "organization",
         )
