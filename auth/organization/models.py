@@ -16,7 +16,7 @@ class Organization(models.Model):
     address = models.TextField()
     registration_number = models.TextField()
     contact_code = models.IntegerField(max_length=4)
-    contact_number = models.IntegerField(max_length=20)
+    contact_number = models.PositiveBigIntegerField(max_length=20)
     email = models.EmailField()
     features = models.ManyToManyField(Feature, related_name="organizations")
     is_active = models.BooleanField(default=True)
