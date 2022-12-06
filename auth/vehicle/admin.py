@@ -10,7 +10,7 @@ admin.site.register(VehicleModel)
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ("uuid", "make", "model", "vehicle_type")
+    list_display = ("vin", "make", "model", "vehicle_type")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

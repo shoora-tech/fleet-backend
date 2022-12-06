@@ -48,6 +48,22 @@ services:
     ports:
       - "8001:8000"
   
+  monitor-shoora:
+    image: python:3.7
+    volumes:
+      - ./auth:/app
+    command: |
+      sh -c '
+      cd /app
+      pip install --upgrade pip
+      make deps
+      make migrate
+      python manage.py collectstatic --noinput
+      python manage.py runserver 0.0.0.0:8000
+      '
+    ports:
+      - "8002:8000"
+  
   celery:
     image: python:3.7
     volumes:
