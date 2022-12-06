@@ -4,11 +4,13 @@ from alert.models import RealTimeDatabase
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from device.models import Device
 from django.db.models import Max
+from auth.filters import RealtimeDBFilter
 
 class RealtimeDatabaseViewSet(viewsets.ModelViewSet):
     lookup_field = "uuid"
     queryset = RealTimeDatabase.objects.all()
     serializer_class = RealTimeDatabaseSerializer
+    filterset_class = RealtimeDBFilter
 
     def get_queryset(self):
         payload = self.request.auth.payload
@@ -22,5 +24,4 @@ class RealtimeDatabaseViewSet(viewsets.ModelViewSet):
         qs = self.queryset.filter(imei__in=device_imeis)
         # qs = qs.annotate(latest=Max('created_at'))
         qs = qs.order_by('imei', '-created_at').distinct('imei')
-        
         return qs
