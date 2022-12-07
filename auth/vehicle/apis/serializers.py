@@ -21,6 +21,9 @@ class VehicleSerializer(serializers.ModelSerializer):
     vehicle_type = serializers.SlugRelatedField(
         queryset=VehicleType.objects.all(), slug_field="uuid"
     )
+    device = serializers.SlugRelatedField(
+        queryset=VehicleType.objects.all(), slug_field="imei_number"
+    )
 
     class Meta:
         model = Vehicle
@@ -31,5 +34,6 @@ class VehicleSerializer(serializers.ModelSerializer):
             "model",
             "vin",
             "vehicle_type",
+            "device",
             "organization",
         )
