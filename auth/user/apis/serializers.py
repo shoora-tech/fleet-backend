@@ -47,7 +47,6 @@ class AccessControlSerializer(serializers.ModelSerializer):
         model = AccessControl
         fields = ("feature", "actions")
 
-
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
     url = serializers.HyperlinkedIdentityField(
