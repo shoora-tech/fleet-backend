@@ -42,6 +42,7 @@ def role_has_access(request, feature, method):
 class AccessControlPermission(BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
+            print("auth issue")
             return False
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
@@ -50,10 +51,12 @@ class AccessControlPermission(BasePermission):
         try:
             feature = Feature.objects.get(name=view.basename)
         except Feature.DoesNotExist:
+            print("no such feature")
             return False
         try:
             method = Method.objects.get(name=request.method)
         except Method.DoesNotExist:
+            print("method issue")
             return False
         if role_has_access(request, feature, method):
             return True

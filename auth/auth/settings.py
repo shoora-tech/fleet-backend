@@ -198,23 +198,49 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIR = (os.path.join(BASE_DIR, "static"),)
 
-CELERY_BROKER_URL = "redis://redis:6379"
-CELERY_RESULT_BACKEND = "redis://redis:6379"
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
+# CELERY_BROKER_URL = "redis://redis:6379"
+# CELERY_RESULT_BACKEND = "redis://redis:6379"
+# CELERY_ACCEPT_CONTENT = ["application/json"]
+# CELERY_TASK_SERIALIZER = "json"
+# CELERY_RESULT_SERIALIZER = "json"
 
-# from celery.schedules import crontab
+# AWS Credentials
+AWS_ACCESS_KEY_ID = ENV.str('AWS_ACCESS_KEY_ID', None)
+AWS_SECRET_ACCESS_KEY = ENV.str('AWS_SECRET_ACCESS_KEY', None)
+# Celery
+CELERY_BROKER_URL = "sqs://{aws_access_key}:{aws_secret_key}@".format(aws_access_key=AWS_ACCESS_KEY_ID, aws_secret_key=AWS_SECRET_ACCESS_KEY)
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_DEFAULT_QUEUE = 'video-telematics'
+CELERY_RESULT_BACKEND = None # Disabling the results backend
+BROKER_TRANSPORT_OPTIONS = {
+    'region': 'ap-south-1',
+    'polling_interval': 20,
+}
 
-# CELERY_BEAT_SCHEDULE = {
-#     'hello': {
-#         'task': 'alert.tasks.hello',
-#         'schedule': crontab()  # execute every minute
-#     },
-#     'alert':{
-#         'task': 'alert.tasks.fetch_alerts',
-#         'schedule': crontab(minute='*/10')  # execute every minute
-#     }
-# }
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    # 'hello': {
+    #     'task': 'alert.tasks.hello',
+    #     'schedule': crontab()  # execute every minute
+    # },
+    'alert':{
+        'task': 'alert.tasks.fetch_alerts',
+        'schedule': crontab(minute='*/10')  # execute every minute
+    },
+    # 'position':{
+    #     'task': 'alert.tasks.poll_task',
+    #     'schedule': 10.0  # execute every minute
+    # }
+}
+
+# China Server URLs
+JSESSION_URL = ENV.str("JSESSION_URL", None)
+FETCH_ALARM_VIDEO_URL = ENV.str("FETCH_ALARM_VIDEO_URL", None)
+
+print(JSESSION_URL)
 
 AUTH_USER_MODEL = "user.User"

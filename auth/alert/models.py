@@ -1,6 +1,7 @@
 from django.db import models
 from uuid import UUID, uuid4
 from organization.models import Organization
+from vehicle.models import Vehicle
 
 # Create your models here.
 
@@ -43,5 +44,42 @@ class Alert(models.Model):
     device_imei = models.CharField(max_length=20)
     alert_time_epoch = models.PositiveBigIntegerField()
     alarm_type = models.IntegerField()
+    alarm_name = models.CharField(
+        verbose_name="Alarm Name",
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+    latitude = models.CharField(max_length=20, blank=True, null=True)
+    longitude = models.CharField(max_length=20, blank=True, null=True)
+    guid = models.CharField(max_length=100, blank=True, null=True)
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class RawAlert(models.Model):
+    device_id_no = models.CharField(max_length=50)
+    alert_latitude = models.CharField(max_length=20, blank=True, null=True)
+    alert_longitude = models.CharField(max_length=20, blank=True, null=True)
+    alert_description = models.CharField(max_length=100, blank=True, null=True)
+    alert_guid = models.CharField(max_length=100, blank=True, null=True)
+    hd = models.CharField(max_length=10)
+    info = models.CharField(max_length=100)
+    img = models.CharField(max_length=100)
+    p1 = models.CharField(max_length=10)
+    p2 = models.CharField(max_length=10)
+    p3 = models.CharField(max_length=10)
+    p4 = models.CharField(max_length=10)
+    rve = models.CharField(max_length=10)
+    alert_type_1 = models.CharField(max_length=10)
+    src_tm = models.CharField(max_length=50)
+    alert_type_2 = models.CharField(max_length=10)
+    time = models.CharField(max_length=50)
+    alert_type_3 = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+# class LatStoredValue(models.Model):
+#     rtd_id = models.IntegerField(blank=True, null=True)
