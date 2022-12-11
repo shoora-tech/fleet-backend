@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from alert.models import RealTimeDatabase
-from organization.apis.serializers import OrganizationSerializer
+from alert.models import RealTimeDatabase, Alert
+from vehicle.models import Vehicle
 
 
 class RealTimeDatabaseSerializer(serializers.ModelSerializer):
@@ -22,4 +22,27 @@ class RealTimeDatabaseSerializer(serializers.ModelSerializer):
             "height",
             "speed",
             "direction",
+        )
+
+class AlertSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source="uuid")
+    vehicle = serializers.SlugRelatedField(
+        # queryset=Vehicle.objects.all(),
+        slug_field="vin",
+        read_only=True
+    )
+    video_url = serializers.ReadOnlyField(source="alert_video_url_shoora",)
+    alert_name = serializers.ReadOnlyField(source="alarm_name",)
+
+    class Meta:
+        model = Alert
+        fields = (
+            "id",
+            "video_url",
+            "device_imei",
+            "vehicle",
+            "alert_name",
+            "latitude",
+            "longitude",
+            "created_at"
         )
