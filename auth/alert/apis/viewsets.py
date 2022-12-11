@@ -29,11 +29,20 @@ class RealtimeDatabaseViewSet(viewsets.ModelViewSet):
 
 class AlertViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "uuid"
+    lookup_url_kwarg = "uuid"
     queryset = Alert.objects.all()
     serializer_class = AlertSerializer
     filterset_class = AlertFilter
+    # filter_class = AlertFilter
+
+    @property
+    def filter_class(self):
+        if self.action == "list":
+            print("filtering ..")
+            return AlertFilter
 
     def get_queryset(self):
+        print("getting qs")
         payload = self.request.auth.payload
         JWTA = JWTAuthentication()
         user = JWTA.get_user(payload)

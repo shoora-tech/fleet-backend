@@ -26,6 +26,20 @@ class MyTokenObtainPairView(TokenObtainPairView):
         return Response(data, status=status.HTTP_200_OK)
 
 
+class OnlyAccessTokenView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        token = super().post(request, *args, **kwargs)
+        JWTA = JWTAuthentication()
+        access_token = AccessToken(token.data["access"])
+        user = JWTA.get_user(access_token.payload)
+        data = {}
+        data["refresh"] = token.data["refresh"]
+        data["access"] = token.data["access"]
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class UserViewSet(BaseViewSet):
     lookup_field = "uuid"
     queryset = User.objects.all()

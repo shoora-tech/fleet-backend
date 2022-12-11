@@ -96,13 +96,13 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication"
     ],
     "DEFAULT_PERMISSION_CLASSES": ["auth.permissions.AccessControlPermission"],
-    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend", "rest_framework.filters.OrderingFilter"],
     "DEFAULT_PAGINATION_CLASS": "auth.pagination.StandardResultsSetPagination",
     "PAGE_SIZE": 20,
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=180),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=180),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,

@@ -10,8 +10,9 @@ class RealtimeDBFilter(filters.FilterSet):
 
 
 class AlertFilter(filters.FilterSet):
-    alert_time = filters.DateTimeFromToRangeFilter(field_name="created_at")
+    alerts_since = filters.IsoDateTimeFilter("created_at", lookup_expr="gte")
+    alerts_until = filters.IsoDateTimeFilter("created_at", lookup_expr="lt")
 
     class Meta:
         model = Alert
-        fields = ['alert_time',]
+        fields = ['alerts_since','alerts_until']
