@@ -11,6 +11,7 @@ admin.site.register(VehicleModel)
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ("vin", "make", "model", "vehicle_type")
+    # filter_horizontal = ("device",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -22,4 +23,6 @@ class VehicleAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             if db_field.name == "organization":
                 kwargs["queryset"] = request.user.installer_organizations.all()
+        # if db_field.name == "device":
+        #     kwargs["queryset"] = Device.objects.filter(is_assigned_to_vehicle=False)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

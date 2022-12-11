@@ -10,8 +10,12 @@ class Trips(models.Model):
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
-    start_location = models.CharField(max_length=50, blank=True, null=True)
+    # start_location = models.CharField(max_length=50, blank=True, null=True)
     end_location = models.CharField(max_length=50, blank=True, null=True)
+    start_latitude = models.IntegerField(blank=True, null=True)
+    end_latitude = models.IntegerField(blank=True, null=True)
+    start_longitude = models.IntegerField(blank=True, null=True)
+    # end_longitude = models.IntegerField(blank=True, null=True)
     started_at = models.DateTimeField()
     ended_at = models.DateTimeField()
     total_incidents = models.PositiveIntegerField(default=0)
