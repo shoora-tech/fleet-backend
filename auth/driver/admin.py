@@ -3,5 +3,8 @@ from .models import *
 
 # Register your models here.
 
-admin.site.register(Driver)
-admin.site.register(DriveHistory)
+class Driveradmin(admin.ModelAdmin):
+    list_display=('name','image','organization','vehicle')
+
+admin.site.register(Driver,Driveradmin)
+admin.site.register(DriverHistory)

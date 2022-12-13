@@ -10,7 +10,7 @@ admin.site.register(VehicleModel)
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ("vin", "make", "model", "vehicle_type")
+    list_display = ("vin", "make", "model", "vehicle_type","organization","last_status_update")
     # filter_horizontal = ("device",)
 
     def get_queryset(self, request):

@@ -8,14 +8,13 @@ from auth.storage import get_image_upload_path
 # Create your models here.
 # id --> pk
 class Organization(models.Model):
-    contact_code_prefix = "+"
+    country_code_prefix = "+"
     uuid = models.UUIDField(
         unique=True, default=uuid4, editable=False, verbose_name=_("UUID")
     )
     name = models.CharField(max_length=50)
     address = models.TextField()
-    registration_number = models.TextField()
-    contact_code = models.IntegerField(max_length=4)
+    country_code = models.IntegerField(max_length=4, blank=True, null=True)
     contact_number = models.PositiveBigIntegerField(max_length=20)
     email = models.EmailField()
     features = models.ManyToManyField(Feature, related_name="organizations")

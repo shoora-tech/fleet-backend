@@ -53,16 +53,16 @@ class Vehicle(models.Model):
     model = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
     vin = models.CharField(max_length=25)
     vehicle_type = models.ForeignKey(VehicleType, on_delete=models.CASCADE)
-    device = models.ForeignKey(Device, on_delete=models.SET_NULL, blank=True, null=True)
-    last_status_update = models.DateTimeField(blank=True, null=True)
+    last_status_update = models.DateTimeField(auto_now=True,blank=True, null=True)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, blank=True, null=True
     )
+    device = models.ForeignKey(Device, on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.make} --> {self.model}"
+        return f"{self.make} --> {self.model} --> {self.vin}"
 
 @receiver(post_save, sender=Vehicle)
 def update_device_status(sender, instance, created, **kwargs):
