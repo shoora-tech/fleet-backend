@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     name = models.CharField(max_length=100)
     address = models.TextField()
-    contact_code = models.IntegerField()
+    contact_code = models.IntegerField(blank=True, null=True)
     contact_number = models.PositiveBigIntegerField()
     email = models.EmailField(unique=True)
     organization = models.ForeignKey(

@@ -3,6 +3,8 @@ from uuid import uuid4
 from organization.models import Organization
 from auth.storage import get_image_upload_path
 from vehicle.models import Vehicle
+import datetime
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 class Driver(models.Model):
@@ -11,17 +13,16 @@ class Driver(models.Model):
     )
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=get_image_upload_path, blank=True, null=True)
-    phone_number = models.IntegerField()
+    phone_number = models.BigIntegerField()
     passport_number = models.CharField(max_length=8)
-    passport_validity = models.DateField()
+    passport_validity = models.DateField(validators=[MinValueValidator(datetime.date.today)])
     driving_license_number = models.CharField(max_length=15)
-    driving_license_validity = models.DateField()
-    driver_score = models.IntegerField(max_length=3)
-    vehicle = models.ForeignKey(
-        Vehicle, on_delete=models.CASCADE, blank=True, null=True
-    )
+    driving_license_validity = models.DateField(validators=[MinValueValidator(datetime.date.today)])
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, blank=True, null=True
+    )
+    vehicle = models.ForeignKey(
+        Vehicle, on_delete=models.CASCADE, blank=True, null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -34,7 +35,7 @@ class Driver(models.Model):
         return self.drive_history.all()
 
 
-class DriveHistory(models.Model):
+class DriverHistory(models.Model):
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )

@@ -29,7 +29,6 @@ class DriverSerializer(serializers.ModelSerializer):
             "passport_validity",
             "driving_license_number",
             "driving_license_validity",
-            "driver_score",
             "vehicle",
             # "organization",
         )

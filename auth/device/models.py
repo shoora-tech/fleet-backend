@@ -3,6 +3,8 @@ from uuid import uuid4
 
 from organization.models import Organization
 
+
+
 # Create your models here.
 
 
@@ -25,21 +27,28 @@ class Device(models.Model):
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
     imei_number = models.CharField(max_length=20)
     sim_number = models.PositiveBigIntegerField()
-    activation_date = models.DateTimeField(
+    activation_date = models.DateTimeField(auto_now_add=True,
         blank=True, null=True
     )  # this will be automatically populated when
     # this device is linked to any vehicle
-    last_device_status_timestamp = models.DateTimeField(blank=True, null=True)
+    last_device_status_timestamp = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     is_assigned_to_vehicle = models.BooleanField(default=False)
     organization = models.ForeignKey(
         Organization, on_delete=models.SET_NULL, blank=True, null=True
     )
-
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+
+
+
     def __str__(self):
         return self.imei_number
+       
+
+
 
 
 # o1 -> 25
