@@ -31,7 +31,6 @@ alarm_name_type_map = {
 
 @shared_task
 def fetch_alerts():
-    print("Hello there!")
     now = datetime.now()
     now_minus_10 = now - timedelta(minutes = 10)
     raw_alert = RawAlert.objects.filter(updated_at__gte=now_minus_10).values(
@@ -79,8 +78,6 @@ def fetch_alerts():
                     infos = video_response.json()['infos']
                     if infos and len(infos) > 0:
                         info = infos[0]
-                        print("\n----------------\n")
-                        print(info)
                         file_url = info['fileUrl']
                         parsing = urlparse(file_url)
                         shoora_file_url = parsing._replace(netloc='admin.shoora.com', path='/video'+parsing.path).geturl()
@@ -96,7 +93,8 @@ def fetch_alerts():
                             vehicle=vehicle,
                             latitude=alert["alert_latitude"],
                             longitude=alert["alert_longitude"],
-                            guid=alert["alert_guid"]
+                            guid=alert["alert_guid"],
+                            org=vehicle.organization
                         )
             except Exception as e:
                 print("exception --> ", e)

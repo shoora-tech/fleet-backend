@@ -62,7 +62,7 @@ class Vehicle(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.make} --> {self.model}"
+        return f"{self.vin}"
 
 @receiver(post_save, sender=Vehicle)
 def update_device_status(sender, instance, created, **kwargs):

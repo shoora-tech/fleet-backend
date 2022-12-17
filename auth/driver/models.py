@@ -18,7 +18,7 @@ class Driver(models.Model):
     driving_license_validity = models.DateField()
     driver_score = models.IntegerField(max_length=3)
     vehicle = models.ForeignKey(
-        Vehicle, on_delete=models.CASCADE, blank=True, null=True
+        Vehicle, on_delete=models.CASCADE, blank=True, null=True, related_name="driver"
     )
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, blank=True, null=True

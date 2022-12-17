@@ -7,6 +7,9 @@ migrations:
 migrate:
 	python manage.py migrate
 
+shell:
+	python manage.py shell
+
 run:
 	python manage.py runserver
 

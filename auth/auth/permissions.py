@@ -1,6 +1,7 @@
 from user.models import Method
 from rest_framework.permissions import BasePermission
 from organization.models import Organization
+from device.models import Device
 
 from user.models import AccessControl
 from feature.models import Feature
@@ -42,7 +43,6 @@ def role_has_access(request, feature, method):
 class AccessControlPermission(BasePermission):
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
-            print("auth issue")
             return False
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
@@ -51,12 +51,10 @@ class AccessControlPermission(BasePermission):
         try:
             feature = Feature.objects.get(name=view.basename)
         except Feature.DoesNotExist:
-            print("no such feature")
             return False
         try:
             method = Method.objects.get(name=request.method)
         except Method.DoesNotExist:
-            print("method issue")
             return False
         if role_has_access(request, feature, method):
             return True
@@ -72,6 +70,15 @@ class AccessControlPermission(BasePermission):
         organization_id = payload["organization_id"]
         if view.basename == "organizations":
             if str(obj.uuid) == organization_id:
+                return True
+        elif view.basename == "alerts":
+            print("base is alerts")
+            if str(obj.vehicle.organization.uuid) == organization_id:
+                return True
+
+        elif view.basename == "gps":
+            device = Device.objects.get(imei_number=obj.imei)
+            if str(device.organization.uuid) == organization_id:
                 return True
         else:
             if str(obj.organization.uuid) == organization_id:
