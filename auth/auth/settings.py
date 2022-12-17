@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "vehicle",
     "driver",
     "alert",
+    "trip",
 ]
 
 MIDDLEWARE = [
@@ -229,6 +230,10 @@ CELERY_BEAT_SCHEDULE = {
     # },
     'alert':{
         'task': 'alert.tasks.fetch_alerts',
+        'schedule': crontab(minute='*/10')  # execute every minute
+    },
+    'trip':{
+        'task': 'trip.tasks.calculate_trips',
         'schedule': crontab(minute='*/10')  # execute every minute
     },
     # 'position':{

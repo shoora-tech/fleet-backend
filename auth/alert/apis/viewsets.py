@@ -42,7 +42,6 @@ class AlertViewSet(viewsets.ReadOnlyModelViewSet):
             return AlertFilter
 
     def get_queryset(self):
-        print("getting qs")
         payload = self.request.auth.payload
         JWTA = JWTAuthentication()
         user = JWTA.get_user(payload)
