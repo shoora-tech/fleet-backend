@@ -223,24 +223,27 @@ BROKER_TRANSPORT_OPTIONS = {
 
 from celery.schedules import crontab
 
-CELERY_BEAT_SCHEDULE = {
-    # 'hello': {
-    #     'task': 'alert.tasks.hello',
-    #     'schedule': crontab()  # execute every minute
-    # },
-    'alert':{
-        'task': 'alert.tasks.fetch_alerts',
-        'schedule': crontab(minute='*/10')  # execute every minute
-    },
-    'trip':{
-        'task': 'trip.tasks.calculate_trips',
-        'schedule': crontab(minute='*/10')  # execute every minute
-    },
-    # 'position':{
-    #     'task': 'alert.tasks.poll_task',
-    #     'schedule': 10.0  # execute every minute
-    # }
-}
+
+celery_beat = ENV.str('celery_beat', False)
+if celery_beat:
+    CELERY_BEAT_SCHEDULE = {
+        # 'hello': {
+        #     'task': 'alert.tasks.hello',
+        #     'schedule': crontab()  # execute every minute
+        # },
+        'alert':{
+            'task': 'alert.tasks.fetch_alerts',
+            'schedule': crontab(minute='*/10')  # execute every minute
+        },
+        'trip':{
+            'task': 'trip.tasks.calculate_trips',
+            'schedule': crontab(minute='*/10')  # execute every minute
+        },
+        # 'position':{
+        #     'task': 'alert.tasks.poll_task',
+        #     'schedule': 10.0  # execute every minute
+        # }
+    }
 
 # China Server URLs
 JSESSION_URL = ENV.str("JSESSION_URL", None)
