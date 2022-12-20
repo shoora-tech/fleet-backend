@@ -25,7 +25,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "country_code",
             "contact_number",
             "email",
-            "registration_number",
             "is_active",
             "features",
             "feature_ids",
