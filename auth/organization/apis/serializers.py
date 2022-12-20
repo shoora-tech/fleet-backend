@@ -22,7 +22,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             "url",
             "name",
             "address",
-            "contact_code",
+            "country_code",
             "contact_number",
             "email",
             "registration_number",

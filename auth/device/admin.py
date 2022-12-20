@@ -3,5 +3,9 @@ from .models import *
 
 # Register your models here.
 
+class DeviceAdmin(admin.ModelAdmin):
+    list_display=('imei_number','sim_number','is_assigned_to_vehicle','organization')
+
+
 admin.site.register(DeviceType)
-admin.site.register(Device)
+admin.site.register(Device,DeviceAdmin)

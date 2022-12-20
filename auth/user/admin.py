@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin
 # Register your models here.
 @admin.register(User)
 class UserAdmin(UserAdmin):
-    list_display = ("email", "name", "organization", "uuid")
+    list_display = ("name","email","organization")
     exclude = ["is_installer", "installer_organizations", "groups", "user_permissions"]
     fieldsets = (
         (None, {'fields': ('email', 'password')}),

@@ -4,4 +4,4 @@ from .models import *
 # Register your models here.
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ("name", "uuid")
+    list_display = ("name", "address")
