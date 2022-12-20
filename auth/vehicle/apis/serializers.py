@@ -34,6 +34,6 @@ class VehicleSerializer(serializers.ModelSerializer):
             "model",
             "vin",
             "vehicle_type",
-            "device",
             "organization",
+            "device",
         )
