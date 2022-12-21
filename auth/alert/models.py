@@ -25,6 +25,8 @@ class RealTimeDatabase(models.Model):
     height = models.IntegerField(blank=True, null=True)
     speed = models.IntegerField(blank=True, null=True)
     direction = models.IntegerField(blank=True, null=True)
+    is_corrupt = models.BooleanField(default=False)
+    raw_hex_data = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
