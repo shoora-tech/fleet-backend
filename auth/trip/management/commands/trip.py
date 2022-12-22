@@ -92,6 +92,8 @@ class Command(BaseCommand):
 
                             t1 = t1.replace(tzinfo=pytz.UTC)
                             duration = (created_at - t1).total_seconds()
+                            if duration < 0:
+                                duration = 0 - duration
                             trip = Trips.objects.create(
                                     start_latitude=str(imei_data['latitude']),
                                     start_longitude=str(imei_data['longitude']),
@@ -133,7 +135,8 @@ class Command(BaseCommand):
                 "ignition_status",
                 "latitude",
                 "longitude",
-                "speed"
+                "speed",
+                "is_corrupt"
             )
             new_id = None
             for rt in rtd:
@@ -183,32 +186,4 @@ class Command(BaseCommand):
                 new_id = rt['id']
             if new_id:
                 r.set("realtime_last_stored_point", new_id)
-        
-        # response = sqs.receive_message(
-        #     QueueUrl="https://sqs.ap-south-1.amazonaws.com/547686973061/video-telematics",
-        #     AttributeNames=[
-        #         'SentTimestamp'
-        #     ],
-        #     MaxNumberOfMessages=1,
-        #     MessageAttributeNames=[
-        #         'All'
-        #     ],
-        #     WaitTimeSeconds=20
-        # )
-
-        # messages = response['Messages']
-        # for msg in messages:
-        #     print("\n------------------------\n")
-            # print(type(json.loads(msg['Body'])),msg['Body'])
-            # print(self.format_sqs_data(json.loads(msg['Body'])))
-        # self.stdout.write(self.style.SUCCESS('Successfully polled "%s"' % response))
-        # for poll_id in options['poll_ids']:
-        #     try:
-        #         poll = Poll.objects.get(pk=poll_id)
-        #     except Poll.DoesNotExist:
-        #         raise CommandError('Poll "%s" does not exist' % poll_id)
-
-        #     poll.opened = False
-        #     poll.save()
-
             
