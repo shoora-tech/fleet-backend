@@ -63,6 +63,7 @@ def fetch_alerts():
             try:
                 print("trying for device ", alert['device_id_no'])
                 vehicle = Vehicle.objects.get(device__imei_number=int(alert['device_id_no']))
+                driver = vehicle.driver.first()
                 params = {
                     "jsession":jsession_id,
                     "begintime":alert['src_tm'],
@@ -91,6 +92,7 @@ def fetch_alerts():
                             alarm_type=info['alarmType'],
                             alarm_name=alarm_name,
                             vehicle=vehicle,
+                            driver=driver
                             latitude=alert["alert_latitude"],
                             longitude=alert["alert_longitude"],
                             guid=alert["alert_guid"],

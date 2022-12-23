@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from alert.models import RealTimeDatabase, Alert
 from vehicle.models import Vehicle
+from driver.apis.serializers import DriverSerializer
 
 
 class RealTimeDatabaseSerializer(serializers.ModelSerializer):
@@ -22,6 +23,7 @@ class RealTimeDatabaseSerializer(serializers.ModelSerializer):
             "height",
             "speed",
             "direction",
+            "created_at",
         )
 
 class AlertSerializer(serializers.ModelSerializer):
@@ -33,6 +35,8 @@ class AlertSerializer(serializers.ModelSerializer):
     )
     video_url = serializers.ReadOnlyField(source="alert_video_url_shoora",)
     alert_name = serializers.ReadOnlyField(source="alarm_name",)
+    # driver = DriverSerializer(read_only=True, allow_null=True)
+    driver = serializers.SerializerMethodField()
 
     class Meta:
         model = Alert
@@ -44,5 +48,18 @@ class AlertSerializer(serializers.ModelSerializer):
             "alert_name",
             "latitude",
             "longitude",
-            "created_at"
+            "created_at",
+            "driver",
         )
+    
+    def get_driver(self, alert):
+        if alert.driver is not None:
+            x = DriverSerializer(alert.driver)
+            return x.data
+        driver = alert.vehicle.driver.first()
+        if driver:
+            x = DriverSerializer(driver)
+            return x.data
+        return None
+
+

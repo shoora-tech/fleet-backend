@@ -2,6 +2,7 @@ from django.db import models
 from uuid import UUID, uuid4
 from organization.models import Organization
 from vehicle.models import Vehicle
+from driver.models import Driver
 
 # Create your models here.
 
@@ -56,6 +57,7 @@ class Alert(models.Model):
     longitude = models.CharField(max_length=20, blank=True, null=True)
     guid = models.CharField(max_length=100, blank=True, null=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, blank=True, null=True)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, blank=True, null=True)
     org = models.ForeignKey(Organization, on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
