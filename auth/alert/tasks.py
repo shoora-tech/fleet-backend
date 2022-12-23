@@ -92,7 +92,7 @@ def fetch_alerts():
                             alarm_type=info['alarmType'],
                             alarm_name=alarm_name,
                             vehicle=vehicle,
-                            driver=driver
+                            driver=driver,
                             latitude=alert["alert_latitude"],
                             longitude=alert["alert_longitude"],
                             guid=alert["alert_guid"],
