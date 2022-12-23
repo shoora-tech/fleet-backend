@@ -5,3 +5,4 @@ from .models import *
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ("name", "address")
+    search_fields = ("name",)

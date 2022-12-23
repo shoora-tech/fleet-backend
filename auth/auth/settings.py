@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "drf_yasg",
     'django_filters',
+    'dal',
+    'dal_select2',
     # Shoora modules
     "feature",
     "organization",
@@ -76,7 +78,7 @@ ROOT_URLCONF = "auth.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -235,10 +237,10 @@ if celery_beat:
             'task': 'alert.tasks.fetch_alerts',
             'schedule': crontab(minute='*/10')  # execute every minute
         },
-        'trip':{
-            'task': 'trip.tasks.calculate_trips',
-            'schedule': crontab(minute='*/10')  # execute every minute
-        },
+        # 'trip':{
+        #     'task': 'trip.tasks.calculate_trips',
+        #     'schedule': crontab(minute='*/10')  # execute every minute
+        # },
         # 'position':{
         #     'task': 'alert.tasks.poll_task',
         #     'schedule': 10.0  # execute every minute
@@ -249,6 +251,7 @@ if celery_beat:
 JSESSION_URL = ENV.str("JSESSION_URL", None)
 FETCH_ALARM_VIDEO_URL = ENV.str("FETCH_ALARM_VIDEO_URL", None)
 
-print(JSESSION_URL)
+# print(JSESSION_URL)
 
 AUTH_USER_MODEL = "user.User"
+CMS_COLOR_SCHEME = "auto"
