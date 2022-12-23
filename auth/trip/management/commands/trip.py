@@ -63,7 +63,8 @@ class Command(BaseCommand):
                 "latitude",
                 "longitude",
                 "speed",
-                "created_at"
+                "created_at",
+                "is_corrupt",
             )
             new_id = None
             for rt in rtd:
@@ -77,8 +78,24 @@ class Command(BaseCommand):
                 
                 if imei_data and len(imei_data)>0:
                     if not status:
-                        print(",arking trip as complete")
+                        print("marking trip as complete")
                         # mark trip as end and store this trip and remove this key from redis
+                        is_corrupt = rt['is_corrupt']
+                        if is_corrupt:
+                            # change the end lat, long to a rt which is not corrupt
+                            try:
+                                rt = RealTimeDatabase.objects.get(imei=rt['imei'], is_corrupt=False,id__gte=last_stored_point, id__lte=rt['id']).values(
+                                        "id",
+                                        "imei",
+                                        "ignition_status",
+                                        "latitude",
+                                        "longitude",
+                                        "speed",
+                                        "created_at",
+                                        "is_corrupt",
+                                    )
+                            except RealTimeDatabase.DoesNotExist:
+                                continue
                         start_pos = (imei_data['latitude'], imei_data['longitude'])
                         end_pos = (latitude, longitude)
                         try:

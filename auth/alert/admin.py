@@ -5,6 +5,7 @@ from datetime import datetime
 
 # Register your models here.
 
+admin.site.register(RawAlert)
 
 @admin.register(RealTimeDatabase)
 class RealtimeDBAdmin(admin.ModelAdmin):

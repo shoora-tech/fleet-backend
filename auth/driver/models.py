@@ -51,3 +51,6 @@ class DriverHistory(models.Model):
 
     def __str__(self):
         return f"{self.driver.name} driving {self.vehicle.vin}"
+    
+    class Meta:
+        verbose_name_plural = "Driver History"
