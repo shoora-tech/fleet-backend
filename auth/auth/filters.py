@@ -13,7 +13,7 @@ class RealtimeDBFilter(filters.FilterSet):
     def filter_vehicle(self, queryset, name, value):
         try:
             vehicle = Vehicle.objects.get(uuid=value)
-            gps = RealTimeDatabase.objects.filter(imei=str(vehicle.device.imei_number)).order_by("-created_at")[:1]
+            gps = RealTimeDatabase.objects.filter(imei=str(vehicle.device.imei_number), is_corrupt=False).order_by("-created_at")[:1]
             return gps
         except Vehicle.DoesNotExist:
             return queryset.none()

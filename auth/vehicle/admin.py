@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import *
+from device.models import Device
+from dal import autocomplete
 
 # Register your models here.
 
@@ -8,10 +10,25 @@ admin.site.register(VehicleMake)
 admin.site.register(VehicleModel)
 
 
+from django import forms
+class VehicleForm(forms.ModelForm):
+    device = forms.ModelChoiceField(
+                queryset=Device.objects.all(),
+                widget=autocomplete.ModelSelect2(
+                        url='vehicle_device_autocomplete',
+                        forward=['organization']
+                ),
+            )
+    class Meta:
+        model = Vehicle
+        fields = '__all__'
+
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ("vin", "make", "model", "vehicle_type",'last_status_update')
-    # filter_horizontal = ("device",)
+    autocomplete_fields = ["organization", "device"]
+    
+    form = VehicleForm
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -23,6 +40,9 @@ class VehicleAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             if db_field.name == "organization":
                 kwargs["queryset"] = request.user.installer_organizations.all()
-        # if db_field.name == "device":
-        #     kwargs["queryset"] = Device.objects.filter(is_assigned_to_vehicle=False)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    
+    class Media:
+        js = (
+            'vehicle/js/chained_dd.js',
+        )
