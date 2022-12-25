@@ -241,10 +241,10 @@ if celery_beat:
             'task': 'alert.tasks.fetch_alerts',
             'schedule': crontab(minute='*/10')  # execute every minute
         },
-        # 'trip':{
-        #     'task': 'trip.tasks.calculate_trips',
-        #     'schedule': crontab(minute='*/10')  # execute every minute
-        # },
+        'trip':{
+            'task': 'trip.tasks.calculate_trips',
+            'schedule': crontab(minute='*/10')  # execute every minute
+        },
         # 'position':{
         #     'task': 'alert.tasks.poll_task',
         #     'schedule': 10.0  # execute every minute
