@@ -222,6 +222,10 @@ BROKER_TRANSPORT_OPTIONS = {
     'polling_interval': 20,
 }
 
+# AWS STORAGE
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = "shoora-dev-bucket"
+
 
 from celery.schedules import crontab
 
