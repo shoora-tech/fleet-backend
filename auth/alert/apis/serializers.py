@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from alert.models import RealTimeDatabase, Alert
 from vehicle.models import Vehicle
-from driver.apis.serializers import DriverSerializer
+from driver.apis.serializers import DriverSerializer, DriverOnlySerializer
 
 
 class RealTimeDatabaseSerializer(serializers.ModelSerializer):
@@ -55,11 +55,11 @@ class AlertSerializer(serializers.ModelSerializer):
     
     def get_driver(self, alert):
         if alert.driver is not None:
-            x = DriverSerializer(alert.driver)
+            x = DriverOnlySerializer(alert.driver, context={'request': self.context['request']})
             return x.data
         driver = alert.vehicle.driver.first()
         if driver:
-            x = DriverSerializer(driver)
+            x = DriverOnlySerializer(driver, context={'request': self.context['request']})
             return x.data
         return None
 
