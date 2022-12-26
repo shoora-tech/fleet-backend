@@ -52,6 +52,6 @@ urlpatterns = [
     path("auth/api/v1/", include("auth.apiurls.auth_apiurls")),
     path("transport/api/v1/", include("auth.apiurls.transport_apiurls")),
     path("monitor/api/v1/", include("auth.apiurls.monitor_apiurls")),
-    path("vehicle_device_autocomplete", DeviceAutocompleteView.as_view(), name='vehicle_device_autocomplete'),
-    path("driver_vehicle_autocomplete", DriverAutocompleteView.as_view(), name='driver_vehicle_autocomplete'),
+    path("auth/vehicle_device_autocomplete", DeviceAutocompleteView.as_view(), name='vehicle_device_autocomplete'),
+    path("auth/driver_vehicle_autocomplete", DriverAutocompleteView.as_view(), name='driver_vehicle_autocomplete'),
 ]
