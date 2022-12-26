@@ -52,5 +52,5 @@ class AlertViewSet(viewsets.ReadOnlyModelViewSet):
         vehicle_vins = list(Vehicle.objects.filter(organization__uuid=organization_id).values_list("id", flat=True))
         qs = self.queryset.filter(vehicle__id__in=vehicle_vins)
         # qs = qs.annotate(latest=Max('created_at'))
-        qs = qs.order_by('guid', 'created_at').distinct('guid')
+        qs = qs.order_by('-created_at')
         return qs
