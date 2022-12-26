@@ -46,14 +46,27 @@ class Command(BaseCommand):
             x[self.change_case(key)] = value
         
         return x
+    
+    def get_gps_for_corrupt_data(self, imei, last_stored_point, corrupted_point):
+        try:
+            temp = RealTimeDatabase.objects.filter(imei=imei, is_corrupt=False,id__gte=last_stored_point, id__lte=corrupted_point)
+            if temp:
+                temp = temp.last()
+                valid_cordinates = {}
+                valid_cordinates['latitude'] = temp.latitude
+                valid_cordinates['longitude'] = temp.longitude
+                return valid_cordinates
+            return None
+        except RealTimeDatabase.DoesNotExist:
+            return None
 
     def handle(self, *args, **options):
         # fetch realtime data from last stored point
         last_stored_point = r.get("realtime_last_stored_point")
         # for each device check if status is ignition Off and device id stored in Redis
         # mark that trip as complete and save in db
-        print("last_stored_point --> ", last_stored_point)
         if last_stored_point:
+
             last_stored_point = int(last_stored_point)
             print("convereted store data ", last_stored_point)
             rtd = RealTimeDatabase.objects.filter(id__gte=last_stored_point).values(
@@ -72,30 +85,22 @@ class Command(BaseCommand):
                 latitude = rt['latitude']
                 longitude = rt['longitude']
                 created_at = rt['created_at']
+                is_corrupt = rt['is_corrupt']
                 imei_data = r.hgetall(str(rt['imei']))
-                print(f"imei data {imei_data} --> {status}")
-                # print("json data ", type(imei_data))
                 
                 if imei_data and len(imei_data)>0:
                     if not status:
-                        print("marking trip as complete")
+                        print("making trip complete")
                         # mark trip as end and store this trip and remove this key from redis
-                        is_corrupt = rt['is_corrupt']
+                        
                         if is_corrupt:
-                            # change the end lat, long to a rt which is not corrupt
-                            try:
-                                rt = RealTimeDatabase.objects.get(imei=rt['imei'], is_corrupt=False,id__gte=last_stored_point, id__lte=rt['id']).values(
-                                        "id",
-                                        "imei",
-                                        "ignition_status",
-                                        "latitude",
-                                        "longitude",
-                                        "speed",
-                                        "created_at",
-                                        "is_corrupt",
-                                    )
-                            except RealTimeDatabase.DoesNotExist:
+                            print("found corrupt data ", rt['longitude'])
+                            valid_cordinates = self.get_gps_for_corrupt_data(rt['imei'], last_stored_point, rt['id'])
+                            if not valid_cordinates:
+                                print("no valid cordinates")
                                 continue
+                            latitude = valid_cordinates['latitude']
+                            longitude = valid_cordinates['longitude']
                         start_pos = (imei_data['latitude'], imei_data['longitude'])
                         end_pos = (latitude, longitude)
                         try:
@@ -103,35 +108,41 @@ class Command(BaseCommand):
                             driver = vehicle.driver.first()
 
                             t1 = datetime.strptime(str(imei_data['started_at']), "%y-%m-%dT%H:%M:%S")
-                            print("\n--------***********----------\n")
-                            print(created_at.tzinfo)
-                            print("\n--------***********----------\n")
 
                             t1 = t1.replace(tzinfo=pytz.UTC)
                             duration = (created_at - t1).total_seconds()
+                            gps_end=None
+                            gps_start = imei_data.get('id', None)
+                            if gps_start:
+                                gps_end=rt['id']
                             if duration < 0:
                                 duration = 0 - duration
-                            trip = Trips.objects.create(
-                                    start_latitude=str(imei_data['latitude']),
-                                    start_longitude=str(imei_data['longitude']),
-                                    end_latitude=latitude,
-                                    end_longitude=longitude,
-                                    started_at=t1,
-                                    ended_at=created_at,
-                                    distance=geodesic(start_pos, end_pos).km,
-                                    duration=duration,
-                                    driver=driver,
-                                    vehicle=vehicle
-                                )
-                            print("trip created --> ", trip)
+                            distance = geodesic(start_pos, end_pos).km
+                            if distance >= 2:
+                                trip = Trips.objects.create(
+                                        start_latitude=str(imei_data['latitude']),
+                                        start_longitude=str(imei_data['longitude']),
+                                        end_latitude=latitude,
+                                        end_longitude=longitude,
+                                        started_at=t1,
+                                        ended_at=created_at,
+                                        distance=geodesic(start_pos, end_pos).km,
+                                        duration=duration,
+                                        driver=driver,
+                                        vehicle=vehicle,
+                                        gps_end=gps_end,
+                                        gps_start=gps_start
+                                    )
+                                print("trip created --> ", trip)
                             r.delete(str(rt['imei']))
                         except Vehicle.DoesNotExist:
                             r.delete(str(rt['imei']))
                 else:
-                    if status and not imei_data:
+                    if status and not imei_data and not is_corrupt:
                         print("setting data ..")
                         # set imei data in redis
                         data = {
+                            "id": rt['id'],
                             "latitude": latitude,
                             "longitude": longitude,
                             "started_at": datetime.strftime(created_at, "%y-%m-%dT%H:%M:%S")
@@ -153,9 +164,11 @@ class Command(BaseCommand):
                 "latitude",
                 "longitude",
                 "speed",
-                "is_corrupt"
+                "is_corrupt",
+                "created_at",
             )
             new_id = None
+            
             for rt in rtd:
                 status = rt['ignition_status']
                 latitude = rt['latitude']
@@ -164,41 +177,55 @@ class Command(BaseCommand):
                 imei_data = r.hgetall(str(rt['imei']))
                 # print("imei data ", imei_data)
                 # print("json data ", type(imei_data))
+                if status and not imei_data:
+                # set imei data in redis
+                    data = {
+                        "id": rt['id'],
+                        "latitude": latitude,
+                        "longitude": longitude,
+                        "started_at": datetime.strftime(created_at, "%y-%m-%dT%H:%M:%S")
+                    }
+                    r.hmset(str(rt['imei']), data)
                 
-                if imei_data and len(imei_data)>0:
-                    if not status:
-                        print(",arking trip as complete")
-                        # mark trip as end and store this trip and remove this key from redis
-                        start_pos = (imei_data['latitude'], imei_data['longitude'])
-                        end_pos = (latitude, longitude)
-                        vehicle = Vehicle.objects.get(device__imei_number=rt['imei'])
-                        driver = vehicle.driver
+                # if imei_data and len(imei_data)>0:
+                #     if not status:
+                #         print(",arking trip as complete")
+                #         # mark trip as end and store this trip and remove this key from redis
+                #         start_pos = (imei_data['latitude'], imei_data['longitude'])
+                #         end_pos = (latitude, longitude)
+                #         try:
+                #         vehicle = Vehicle.objects.get(device__imei_number=rt['imei'])
+                #         driver = vehicle.driver
+                #         t1 = datetime.strptime(str(imei_data['started_at']), "%y-%m-%dT%H:%M:%S")
 
-                        t1 = datetime.strptime(str(imei_data['started_at']), "%y-%m-%dT%H:%M:%S")
-                        duration = (created_at - t1).total_seconds()
-                        trip = Trips.objects.create(
-                                start_latitude=str(imei_data['latitude']),
-                                start_longitude=str(imei_data['longitude']),
-                                end_latitude=latitude,
-                                end_longitude=longitude,
-                                started_at=str(imei_data['started_at']),
-                                ended_at=created_at,
-                                distance=geodesic(start_pos, end_pos).km,
-                                duration=duration,
-                                driver=driver,
-                                vehicle=vehicle
-                            )
-                        print("trip created --> ", trip)
-                        r.delete(str(rt['imei']))
-                else:
-                    if status and not imei_data:
-                        # set imei data in redis
-                        data = {
-                            "latitude": latitude,
-                            "longitude": longitude,
-                            "started_at": datetime.strftime(created_at, "%y-%m-%dT%H:%M:%S")
-                        }
-                        r.hmset(str(rt['imei']), data)
+                #         t1 = t1.replace(tzinfo=pytz.UTC)
+                #         duration = (created_at - t1).total_seconds()
+
+                #         # t1 = datetime.strptime(str(imei_data['started_at']), "%y-%m-%dT%H:%M:%S")
+                #         # duration = (created_at - t1).total_seconds()
+                #         trip = Trips.objects.create(
+                #                 start_latitude=str(imei_data['latitude']),
+                #                 start_longitude=str(imei_data['longitude']),
+                #                 end_latitude=latitude,
+                #                 end_longitude=longitude,
+                #                 started_at=str(imei_data['started_at']),
+                #                 ended_at=created_at,
+                #                 distance=geodesic(start_pos, end_pos).km,
+                #                 duration=duration,
+                #                 driver=driver,
+                #                 vehicle=vehicle
+                #             )
+                #         print("trip created --> ", trip)
+                #         r.delete(str(rt['imei']))
+                # else:
+                #     if status and not imei_data:
+                #         # set imei data in redis
+                #         data = {
+                #             "latitude": latitude,
+                #             "longitude": longitude,
+                #             "started_at": datetime.strftime(created_at, "%y-%m-%dT%H:%M:%S")
+                #         }
+                #         r.hmset(str(rt['imei']), data)
                 # print("imei_data ", imei_data)
                 new_id = rt['id']
             if new_id:

@@ -7,7 +7,7 @@ from vehicle.models import Vehicle
 from django.db.models import Max
 from auth.filters import RealtimeDBFilter, AlertFilter
 
-class RealtimeDatabaseViewSet(viewsets.ModelViewSet):
+class RealtimeDatabaseViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "uuid"
     queryset = RealTimeDatabase.objects.all()
     serializer_class = RealTimeDatabaseSerializer
