@@ -26,6 +26,7 @@ class RealTimeDatabaseSerializer(serializers.ModelSerializer):
             "created_at",
         )
 
+
 class AlertSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source="uuid")
     vehicle = serializers.SlugRelatedField(

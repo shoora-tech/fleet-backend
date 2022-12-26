@@ -80,6 +80,11 @@ class AccessControlPermission(BasePermission):
             device = Device.objects.get(imei_number=obj.imei)
             if str(device.organization.uuid) == organization_id:
                 return True
+
+        elif view.basename == "trips":
+            vehicle = obj.vehicle
+            if str(vehicle.organization.uuid) == organization_id:
+                return True
         else:
             if str(obj.organization.uuid) == organization_id:
                 return True

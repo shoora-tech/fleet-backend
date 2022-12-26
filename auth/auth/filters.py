@@ -1,6 +1,7 @@
 from django_filters import rest_framework as filters
 from alert.models import RealTimeDatabase, Alert
 from vehicle.models import Vehicle
+from trip.models import Trips
 
 class RealtimeDBFilter(filters.FilterSet):
     imei = filters.NumberFilter(field_name="imei")
@@ -26,3 +27,16 @@ class AlertFilter(filters.FilterSet):
     class Meta:
         model = Alert
         fields = ['alerts_since','alerts_until']
+
+
+class TripFilter(filters.FilterSet):
+    vehicle_id = filters.UUIDFilter(field_name="vehicle__uuid",)
+    class Meta:
+        model = Trips
+        fields = ("vehicle_id",)
+
+class TripLocationFilter(filters.FilterSet):
+    trip_id = filters.UUIDFilter(field_name="uuid",)
+    class Meta:
+        model = Trips
+        fields = ("trip_id",)

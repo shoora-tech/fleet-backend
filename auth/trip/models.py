@@ -23,6 +23,8 @@ class Trips(models.Model):
     duration = models.PositiveIntegerField(default=0)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, null=True, blank=True)
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    gps_start = models.BigIntegerField(blank=True, null=True)
+    gps_end = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
