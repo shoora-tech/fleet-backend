@@ -2,6 +2,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets
 from .serializers import OrganizationSerializer
 from organization.models import Organization
+from rest_framework.pagination import PageNumberPagination
 
 
 class OrganizationViewSet(viewsets.ModelViewSet):
@@ -9,6 +10,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     queryset = Organization.objects.all()
     serializer_class = OrganizationSerializer
     # permission_classes = [AccessControlPermission]
+    # pagination_class = PageNumberPagination
 
     def get_queryset(self):
         payload = self.request.auth.payload

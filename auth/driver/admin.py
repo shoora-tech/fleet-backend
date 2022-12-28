@@ -21,6 +21,9 @@ class DriverForm(forms.ModelForm):
 class DriverAdmin(admin.ModelAdmin):
     exclude=('driver_score',)
     list_display=('name','image','organization','vehicle')
+    search_fields = ['name']
+    list_per_page = 10
+    list_filter = ['organization']
     form = DriverForm
 
 admin.site.register(Driver,DriverAdmin)

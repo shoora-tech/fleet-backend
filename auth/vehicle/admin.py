@@ -27,6 +27,10 @@ class VehicleForm(forms.ModelForm):
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ("vin", "make", "model", "vehicle_type",'last_status_update')
     autocomplete_fields = ["organization", "device"]
+    list_per_page = 10
+    search_fields = ['vin']
+    list_filter = ['last_status_update']
+    ordering = ['last_status_update']
     
     form = VehicleForm
 

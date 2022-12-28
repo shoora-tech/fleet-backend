@@ -8,6 +8,8 @@ class DeviceAdmin(admin.ModelAdmin):
     list_display=('imei_number','sim_number','is_assigned_to_vehicle','organization')
     readonly_fields = ('is_assigned_to_vehicle', "get_activation_date","get_last_device_status_timestamp")
     search_fields = ("imei_number",)
+    list_per_page = 10
+    list_filter = ['is_assigned_to_vehicle','organization']
     exclude = ("activation_date", "last_device_status_timestamp")
 
     def get_activation_date(self, obj):
