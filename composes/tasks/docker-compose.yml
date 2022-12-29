@@ -81,7 +81,7 @@ services:
       sh -c '
       cd /app
       pip install --upgrade pip
-      make deps
+      make api-deps
       celery -A auth worker -l info
       '
     
@@ -95,7 +95,7 @@ services:
       sh -c '
       cd /app
       pip install --upgrade pip
-      make deps
+      make api-deps
       celery -A auth beat -l info
       '
     depends_on:
