@@ -46,6 +46,9 @@ class AccessControlPermission(BasePermission):
             return False
         JWTA = JWTAuthentication()
         user = JWTA.get_user(request.auth.payload)
+        print(" view ", view.basename)
+        if view.basename == 'device-status':
+            return True
         if user.is_superuser:
             return True
         try:
@@ -89,3 +92,8 @@ class AccessControlPermission(BasePermission):
             if str(obj.organization.uuid) == organization_id:
                 return True
         return False
+
+
+class DeviceStatusPermission(BasePermission):
+    def has_permission(self, request, view):
+        return super().has_permission(request, view)
