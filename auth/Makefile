@@ -1,6 +1,9 @@
 deps:
 	pip install -r requirements.txt
 
+api-deps:
+	pip install -r api-requirements.txt
+
 migrations:
 	python manage.py makemigrations
 
