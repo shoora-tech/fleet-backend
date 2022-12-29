@@ -40,3 +40,12 @@ class TripLocationFilter(filters.FilterSet):
     class Meta:
         model = Trips
         fields = ("trip_id",)
+
+
+class VehicleFilter(filters.FilterSet):
+    vehicles_since = filters.IsoDateTimeFilter("created_at", lookup_expr="gte")
+    vehicles_until = filters.IsoDateTimeFilter("created_at", lookup_expr="lt")
+
+    class Meta:
+        model = Vehicle
+        fields = ['vehicles_since','vehicles_until']
