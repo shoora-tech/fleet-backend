@@ -6,6 +6,7 @@ from django.conf import settings
 from vehicle.models import Vehicle
 from alert.models import Alert
 from urllib.parse import urlparse
+from django.utils import timezone
 
 FORWARD_COLLISION_WARNING = "Forward Collision Warning"
 LANE_DEVIATION_WARNING = "Lane Deviation Warning"
@@ -31,7 +32,7 @@ alarm_name_type_map = {
 
 @shared_task
 def fetch_alerts():
-    now = datetime.now()
+    now = timezone.now()
     now_minus_10 = now - timedelta(minutes = 10)
     raw_alert = RawAlert.objects.filter(updated_at__gte=now_minus_10).values(
         "device_id_no",
