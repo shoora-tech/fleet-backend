@@ -105,6 +105,7 @@ class Command(BaseCommand):
                         end_pos = (latitude, longitude)
                         try:
                             vehicle = Vehicle.objects.get(device__imei_number=rt['imei'])
+                            # vehicle = vehicle.first()
                             driver = vehicle.driver.first()
 
                             t1 = datetime.strptime(str(imei_data['started_at']), "%y-%m-%dT%H:%M:%S")

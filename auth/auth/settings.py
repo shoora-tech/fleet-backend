@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django_filters',
     'dal',
     'dal_select2',
+    "drf_spectacular",
     # Shoora modules
     "feature",
     "organization",
@@ -102,6 +103,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend", "rest_framework.filters.OrderingFilter"],
     "DEFAULT_PAGINATION_CLASS": "auth.pagination.StandardResultsSetPagination",
     "PAGE_SIZE": 20,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
@@ -129,6 +131,29 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+}
+
+# SWAGGER
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Basic': {
+            'type': 'basic'
+      },
+      'JWT [Bearer {JWT}]': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'scheme': 'Bearer'
+      }
+   }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Shoora APIs',
+    'DESCRIPTION': 'Shoora API Docs',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 # CORS
@@ -210,6 +235,7 @@ STATICFILES_DIR = (os.path.join(BASE_DIR, "static"),)
 # AWS Credentials
 AWS_ACCESS_KEY_ID = ENV.str('AWS_ACCESS_KEY_ID', None)
 AWS_SECRET_ACCESS_KEY = ENV.str('AWS_SECRET_ACCESS_KEY', None)
+
 # Celery
 CELERY_BROKER_URL = "sqs://{aws_access_key}:{aws_secret_key}@".format(aws_access_key=AWS_ACCESS_KEY_ID, aws_secret_key=AWS_SECRET_ACCESS_KEY)
 CELERY_ACCEPT_CONTENT = ['application/json']
@@ -225,6 +251,7 @@ BROKER_TRANSPORT_OPTIONS = {
 # AWS STORAGE
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = "shoora-dev-bucket"
+AWS_QUERYSTRING_AUTH = False
 
 
 from celery.schedules import crontab

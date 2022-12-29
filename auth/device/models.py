@@ -23,7 +23,7 @@ class Device(models.Model):
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
     device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
-    imei_number = models.CharField(max_length=20)
+    imei_number = models.CharField(max_length=20, unique=True)
     sim_number = models.PositiveBigIntegerField()
     activation_date = models.DateTimeField(
         blank=True, null=True
@@ -32,7 +32,7 @@ class Device(models.Model):
     last_device_status_timestamp = models.DateTimeField(blank=True, null=True)
     is_assigned_to_vehicle = models.BooleanField(default=False)
     organization = models.ForeignKey(
-        Organization, on_delete=models.SET_NULL, blank=True, null=True
+        Organization, on_delete=models.SET_NULL, blank=True, null=True, related_name="devices"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

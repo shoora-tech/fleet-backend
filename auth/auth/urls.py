@@ -22,6 +22,7 @@ from vehicle.views import DeviceAutocompleteView
 from driver.views import DriverAutocompleteView
 
 from django.contrib import admin
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 admin.site.site_header = 'Shoora CMS'                    # default: "Django Administration"
 admin.site.index_title = 'Shoora CMS'                 # default: "Site administration"
@@ -42,11 +43,16 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     # path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path(
-        "swagger/",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
+    # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+    # path(
+    #     "swagger/",
+    #     schema_view.with_ui("swagger", cache_timeout=0),
+    #     name="schema-swagger-ui",
+    # ),
     # path(r'^redoc/$', schema_ßview.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path("auth/admin/", admin.site.urls),
     path("auth/api/v1/", include("auth.apiurls.auth_apiurls")),
