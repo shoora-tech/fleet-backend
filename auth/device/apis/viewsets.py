@@ -5,9 +5,9 @@ from device.models import Device
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework import status
-from organization.models import Organization
+from organization.models import Organization, JSession
 import requests
-
+from django.conf import settings
 
 class DeviceViewSet(BaseViewSet):
     lookup_field = "uuid"
@@ -23,13 +23,24 @@ class DeviceStatus(viewsets.ReadOnlyModelViewSet):
         print("cheching ststaus")
         if not request.user.is_authenticated:
             return Response({"detail": "Invalid access token"}, status=status.HTTP_401_UNAUTHORIZED)
-        
+        jsession_id = None
+        jsession = JSession.objects.first()
+        if not jsession:
+            login_url = settings.JSESSION_URL
+            resp = requests.get(url=login_url)
+            if resp.status_code == 200:
+                # save the jsession id
+                data = resp.json()
+                jsession_id = data['jsession']
+                obj, created = JSession.objects.update_or_create(jsesion=data['jsession'])
+        else:
+            jsession_id = jsession.jsesion
         device_status_param = {
-            "jsession":"02d011cfea1840cea9f98a4b4e5d8589"
+            "jsession":jsession_id
         }
         device_status_url = "https://dsm.shoora.com/StandardApiAction_getDeviceOlStatus.action"
         device_ids = request.GET.get("device_id", None)
-        if device_ids:
+        if device_ids and jsession_id:
             JWTA = JWTAuthentication()
             payload = request.auth.payload
             organization_id = payload["organization_id"]

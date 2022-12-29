@@ -272,6 +272,10 @@ if celery_beat:
             'task': 'trip.tasks.calculate_trips',
             'schedule': crontab(minute='*/10')  # execute every minute
         },
+        'jsession':{
+            'task': 'device.tasks.update_jsession',
+            'schedule': crontab(hour="*/5")  # execute in evry 5 hours
+        }
         # 'position':{
         #     'task': 'alert.tasks.poll_task',
         #     'schedule': 10.0  # execute every minute
