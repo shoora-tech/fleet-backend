@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_installer = models.BooleanField(default=False)
-    roles = models.ManyToManyField("role", related_name="users", blank=True, null=True)
+    roles = models.ManyToManyField("role", related_name="users", blank=True)
 
     USERNAME_FIELD = "email"
     objects = MyAccountManager()

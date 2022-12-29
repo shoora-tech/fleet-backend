@@ -11,9 +11,53 @@ admin.site.register(RawAlert)
 class RealtimeDBAdmin(admin.ModelAdmin):
     list_display = ("imei", "latitude", "longitude", "created_at")
 
+
+class OrganizationTextFilter(admin.SimpleListFilter):
+    title = 'Organization'
+    parameter_name = 'name'
+    template = 'admin_input_filter.html'
+
+    def lookups(self, request, model_admin):
+        return ((None, None),)
+
+    def choices(self, changelist):
+        query_params = changelist.get_filters_params()
+        query_params.pop(self.parameter_name, None)
+        all_choice = next(super().choices(changelist))
+        all_choice['query_params'] = query_params
+        yield all_choice
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            return queryset.filter(organization__name__istartswith=value)
+
+
+class VehicleTextFilter(admin.SimpleListFilter):
+    title = 'Vehicle'
+    parameter_name = 'vin'
+    template = 'admin_input_filter.html'
+
+    def lookups(self, request, model_admin):
+        return ((None, None),)
+
+    def choices(self, changelist):
+        query_params = changelist.get_filters_params()
+        query_params.pop(self.parameter_name, None)
+        all_choice = next(super().choices(changelist))
+        all_choice['query_params'] = query_params
+        yield all_choice
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value:
+            return queryset.filter(vehicle__vin__istartswith=value)
+
+
 @admin.register(Alert)
 class AlertAdmin(admin.ModelAdmin):
     list_display = ("vehicle", "organization", "driver", "alarm_name", "alert_created_at", "alert_video_url")
+    list_filter = (VehicleTextFilter, OrganizationTextFilter, "alarm_name")
     list_per_page = 20
 
     def alert_created_at(self, obj):

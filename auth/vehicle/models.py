@@ -51,11 +51,11 @@ class Vehicle(models.Model):
     )
     make = models.ForeignKey(VehicleMake, on_delete=models.CASCADE)
     model = models.ForeignKey(VehicleModel, on_delete=models.CASCADE)
-    vin = models.CharField(max_length=25)
+    vin = models.CharField(max_length=25, unique=True)
     vehicle_type = models.ForeignKey(VehicleType, on_delete=models.CASCADE)
     last_status_update = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     organization = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, blank=True, null=True
+        Organization, on_delete=models.CASCADE, blank=True, null=True, related_name="vehicles"
     )
     device = models.ForeignKey(Device, on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

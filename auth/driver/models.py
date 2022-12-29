@@ -18,7 +18,7 @@ class Driver(models.Model):
     passport_validity = models.DateField(validators=[MinValueValidator(datetime.date.today)])
     driving_license_number = models.CharField(max_length=15)
     driving_license_validity = models.DateField(validators=[MinValueValidator(datetime.date.today)])
-    driver_score = models.IntegerField(max_length=3, default=100)
+    driver_score = models.IntegerField(default=100)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, blank=True, null=True
     )

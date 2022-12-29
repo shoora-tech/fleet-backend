@@ -5,6 +5,8 @@ import urllib.request
 def compare_face_by_url(known_image_urls, image_2_url):
     # image_1_url should be a known image
     # image_2_url should be the image that needs to be compared
+    print(known_image_urls)
+    print(image_2_url)
     known_image_encodings = []
     known_images = []
     try:
@@ -16,7 +18,7 @@ def compare_face_by_url(known_image_urls, image_2_url):
         
         image_2 = face_recognition.load_image_file(response_2)
     except Exception as e:
-        return False, "Unable to load the image"
+        return False, "Unable to load the image", 0
     
     try:
         for image_1 in known_images:
@@ -24,7 +26,7 @@ def compare_face_by_url(known_image_urls, image_2_url):
             known_image_encodings.append(image_1_encoding)
         image_2_encoding = face_recognition.face_encodings(image_2)[0]
     except IndexError as e:
-        return False, "No faces found in the image"
+        return False, "No faces found in the image", 0
 
     results = face_recognition.compare_faces(known_image_encodings, image_2_encoding, 0.3)
     pos = 0
