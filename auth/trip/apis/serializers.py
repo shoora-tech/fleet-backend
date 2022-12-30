@@ -49,11 +49,15 @@ class TripSerializer(serializers.ModelSerializer):
 
 class TripLocationSerializer(serializers.ModelSerializer):
     gps_cordinates = serializers.SerializerMethodField()
+    trip_started_at = serializers.SerializerMethodField()
+    trip_ended_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Trips
         fields = (
             "gps_cordinates",
+            "trip_started_at",
+            "trip_started_at",
         )
     
     def get_gps_cordinates(self, obj):
@@ -68,4 +72,15 @@ class TripLocationSerializer(serializers.ModelSerializer):
                 ).values_list("latitude", "longitude")
                 )
         return location_points
-
+    
+    def get_trip_started_at(self, obj):
+        gps_start = obj.gps_start
+        if gps_start:
+            rt = RealTimeDatabase.objects.get(id=gps_start)
+            return rt.created_at
+    
+    def get_trip_ended_at(self, obj):
+        gps_end = obj.gps_end
+        if gps_end:
+            rt = RealTimeDatabase.objects.get(id=gps_end)
+            return rt.created_at

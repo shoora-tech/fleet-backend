@@ -46,5 +46,5 @@ class VehicleTextFilter(admin.SimpleListFilter):
 
 @admin.register(Trips)
 class TripAdmin(admin.ModelAdmin):
-    list_display = ("vehicle", "duration", "distance", "created_at")
+    list_display = ("vehicle", "duration", "distance", "created_at", "start_longitude", "end_longitude")
     list_filter = (OrganizationTextFilter, VehicleTextFilter)
