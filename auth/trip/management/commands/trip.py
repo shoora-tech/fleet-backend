@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from geopy.distance import geodesic
 from vehicle.models import Vehicle
 import pytz
+from django.utils import timezone
 
 # redis storage
 r = redis.Redis(
@@ -154,7 +155,7 @@ class Command(BaseCommand):
             if new_id:
                 r.set("realtime_last_stored_point", new_id)
         else:
-            now = datetime.now()
+            now = timezone.now()
             print("now is ", now)
             now_minus_1 = now - timedelta(minutes = 10)
             print("noe-10 ", now_minus_1)
