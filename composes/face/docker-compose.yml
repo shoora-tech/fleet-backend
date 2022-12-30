@@ -1,0 +1,59 @@
+version: "3.8"
+services:
+  # nginx_shoora:
+  #   image: nginx
+  #   volumes:
+  #     - '../../nginx/default.conf:/etc/nginx/nginx.conf'
+  #     - '../../nginx/ssl:/etc/nginx/ssl'
+  #   ports:
+  #     - '8888:80' #local:docker
+  #     - '554:443'
+  #   depends_on:
+  #     - celery-beat
+  #     - celery
+  
+  redis:
+    image: "redis:alpine"
+    command: |
+      sh -c '
+      redis-server
+      '
+    ports:
+        - "6379:6379"
+    volumes:
+        - ../../redis-volume:/data
+
+  
+  celery:
+    image: python:3.7-slim
+    volumes:
+      - ../../auth:/app
+    command: |
+      sh -c '
+      apt-get -y update
+      apt-get install -y libssl-dev libcurl4-openssl-dev python-dev
+      apt-get install -y build-essential cmake
+      apt-get install -y libopencv-dev
+      cd /app
+      pip install --upgrade pip
+      make deps
+      celery -A auth worker -l info -Q face
+      '
+    
+    depends_on:
+      - redis
+  celery-beat:
+    image: python:3.7-slim
+    volumes:
+      - ../../auth:/app
+    command: |
+      sh -c '
+      apt-get -y update
+      apt install libcurl4-openssl-dev libssl-dev
+      cd /app
+      pip install --upgrade pip
+      make api-deps
+      celery -A auth beat -l info
+      '
+    depends_on:
+      - redis

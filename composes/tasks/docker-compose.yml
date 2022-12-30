@@ -82,7 +82,7 @@ services:
       cd /app
       pip install --upgrade pip
       make api-deps
-      celery -A auth worker -l info
+      celery -A auth worker -l info -Q gps
       '
     
     depends_on:

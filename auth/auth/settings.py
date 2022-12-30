@@ -258,6 +258,11 @@ from celery.schedules import crontab
 
 
 celery_beat = ENV.str('celery_beat', False)
+CELERY_TASK_ROUTES = {
+ 'alert.tasks.fetch_alerts': {'queue': 'gps'},
+ 'trip.tasks.calculate_trips': {'queue': 'gps'},
+ 'device.tasks.update_jsession': {'queue': 'gps'},
+}
 if celery_beat:
     CELERY_BEAT_SCHEDULE = {
         # 'hello': {
@@ -266,15 +271,18 @@ if celery_beat:
         # },
         'alert':{
             'task': 'alert.tasks.fetch_alerts',
-            'schedule': crontab(minute='*/10')  # execute every minute
+            'schedule': crontab(minute='*/10'),  # execute every minute
+            'options': {'queue': 'gps'}
         },
         'trip':{
             'task': 'trip.tasks.calculate_trips',
-            'schedule': crontab(minute='*/10')  # execute every minute
+            'schedule': crontab(minute='*/10'),  # execute every minute
+            'options': {'queue': 'gps'}
         },
         'jsession':{
             'task': 'device.tasks.update_jsession',
-            'schedule': crontab(hour="*/5")  # execute in evry 5 hours
+            'schedule': crontab(hour="*/5"),  # execute in evry 5 hours
+            'options': {'queue': 'gps'}
         }
         # 'position':{
         #     'task': 'alert.tasks.poll_task',
