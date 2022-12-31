@@ -54,7 +54,9 @@ class VehicleListSerializer(serializers.ModelSerializer):
     model = serializers.ReadOnlyField(source="model.name")
     vehicle_type = serializers.ReadOnlyField(source="vehicle_type.name")
     device = serializers.ReadOnlyField(source="device.imei_number")
+    driver = serializers.ReadOnlyField(source="driver.name")
     status = serializers.SerializerMethodField()
+    last_device_status_timestamp = serializers.SerializerMethodField()
     
 
     class Meta:
@@ -68,20 +70,22 @@ class VehicleListSerializer(serializers.ModelSerializer):
             "vehicle_type",
             "organization",
             "device",
+            "driver",
             'status',
+            'last_device_status_timestamp',
         )
     
     def get_status(self, obj):
-        rt = RealTimeDatabase.objects.filter(imei=obj.device.imei_number)
-        if rt:
-            rt = rt.last()
-            ignition_status = rt.ignition_status
-            if ignition_status and rt.speed > 0:
-                return 'moving'
-            elif ignition_status and rt.speed == 0:
-                return 'idle'
-            elif not ignition_status:
-                return 'stopped'
-            return 'unknown'
+        ignition_status = obj.device.ignition_status
+        speed = obj.device.speed
+        if ignition_status and speed > 0:
+            return 'moving'
+        elif ignition_status and speed == 0:
+            return 'idle'
+        elif not ignition_status:
+            return 'stopped'
         return 'unknown'
+    
+    def get_last_device_status_timestamp(self, obj):
+        return obj.device.last_device_status_timestamp
 
