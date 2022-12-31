@@ -24,5 +24,5 @@ class VehicleViewSet(viewsets.ModelViewSet):
         if user.is_superuser:
             return self.queryset
         organization_id = payload["organization_id"]
-        qs = self.queryset.filter(organization__uuid=organization_id)
+        qs = self.queryset.filter(organization__uuid=organization_id).order_by("created_at")
         return qs

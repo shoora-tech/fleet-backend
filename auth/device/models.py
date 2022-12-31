@@ -19,6 +19,16 @@ class DeviceType(models.Model):
 
 
 class Device(models.Model):
+    MOVING = 'MOVING'
+    STOPPED = 'STOPPED',
+    IDLE = 'IDLE'
+    UNKNOWN = 'UNKNOWN'
+    STATUS_CHOICES = (
+        (MOVING, 'moving'),
+        (STOPPED, 'stopped'),
+        (IDLE, 'idle'),
+        (UNKNOWN, 'unknown')
+    )
     uuid = models.UUIDField(
         default=uuid4, unique=True, editable=False, verbose_name="UUID"
     )
@@ -29,6 +39,11 @@ class Device(models.Model):
         blank=True, null=True
     )  # this will be automatically populated when
     # this device is linked to any vehicle
+    ignition_status = models.BooleanField(default=False)
+    speed = models.IntegerField(blank=True, null=True)
+    # last_device_status = models.CharField(max_length=10,
+    #               choices=STATUS_CHOICES,
+    #               default=MOVING)
     last_device_status_timestamp = models.DateTimeField(blank=True, null=True)
     is_assigned_to_vehicle = models.BooleanField(default=False)
     organization = models.ForeignKey(
