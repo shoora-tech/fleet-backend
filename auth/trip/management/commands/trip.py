@@ -50,7 +50,7 @@ class Command(BaseCommand):
     
     def get_gps_for_corrupt_data(self, imei, last_stored_point, corrupted_point):
         try:
-            temp = RealTimeDatabase.objects.filter(imei=imei, is_corrupt=False,id__gte=last_stored_point, id__lte=corrupted_point)
+            temp = RealTimeDatabase.objects.filter(imei=imei, longitude__lt=90,id__gte=last_stored_point, id__lte=corrupted_point)
             if temp:
                 temp = temp.last()
                 valid_cordinates = {}
@@ -87,18 +87,18 @@ class Command(BaseCommand):
                 created_at = rt['created_at']
                 is_corrupt = rt['is_corrupt']
                 imei_data = r.hgetall(str(rt['imei']))
-                if longitude > 90:
-                    is_corrupt = True
+                # if longitude > 90:
+                #     is_corrupt = True
                 
                 if imei_data and len(imei_data)>0:
-                    if not status:
+                    if not status and is_corrupt==False:
                         # mark trip as end and store this trip and remove this key from redis
-                        if is_corrupt:
-                            valid_cordinates = self.get_gps_for_corrupt_data(rt['imei'], last_stored_point, rt['id'])
-                            if not valid_cordinates:
-                                continue
-                            latitude = valid_cordinates['latitude']
-                            longitude = valid_cordinates['longitude']
+                        # if is_corrupt:
+                        #     valid_cordinates = self.get_gps_for_corrupt_data(rt['imei'], last_stored_point, rt['id'])
+                        #     if not valid_cordinates:
+                        #         continue
+                        #     latitude = valid_cordinates['latitude']
+                        #     longitude = valid_cordinates['longitude']
                         start_pos = (imei_data['latitude'], imei_data['longitude'])
                         end_pos = (latitude, longitude)
                         try:
