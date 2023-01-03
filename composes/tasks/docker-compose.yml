@@ -1,16 +1,16 @@
 version: "3.8"
 services:
-  nginx_shoora:
-    image: nginx
-    volumes:
-      - '../../nginx/default.conf:/etc/nginx/nginx.conf'
-      - '../../nginx/ssl:/etc/nginx/ssl'
-    ports:
-      - '8888:80' #local:docker
-      - '554:443'
-    depends_on:
-      - celery-beat
-      - celery
+  # nginx_shoora:
+  #   image: nginx
+  #   volumes:
+  #     - '../../nginx/default.conf:/etc/nginx/nginx.conf'
+  #     - '../../nginx/ssl:/etc/nginx/ssl'
+  #   ports:
+  #     - '8888:80' #local:docker
+  #     - '554:443'
+  #   depends_on:
+  #     - celery-beat
+  #     - celery
   
   redis:
     image: "redis:alpine"
