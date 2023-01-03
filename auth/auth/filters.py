@@ -3,6 +3,9 @@ from alert.models import RealTimeDatabase, Alert
 from vehicle.models import Vehicle
 from trip.models import Trips
 from django.db.models import OuterRef, Subquery
+from datetime import datetime, timedelta
+import pytz
+from django.utils import timezone
 
 class RealtimeDBFilter(filters.FilterSet):
     imei = filters.NumberFilter(field_name="imei")
@@ -47,10 +50,11 @@ class VehicleFilter(filters.FilterSet):
     vehicles_since = filters.IsoDateTimeFilter("created_at", lookup_expr="gte")
     vehicles_until = filters.IsoDateTimeFilter("created_at", lookup_expr="lt")
     status = filters.CharFilter(field_name='device', method='filter_status')
+    imei = filters.CharFilter(field_name="device__imei_number")
 
     class Meta:
         model = Vehicle
-        fields = ['vehicles_since','vehicles_until', 'status']
+        fields = ['vehicles_since','vehicles_until', 'status', 'imei']
     
     def filter_status(self, queryset, name, value):
         if value == 'moving':
@@ -59,4 +63,11 @@ class VehicleFilter(filters.FilterSet):
             queryset = queryset.filter(device__ignition_status=True, device__speed=0)
         elif value == 'stopped':
             queryset = queryset.filter(device__ignition_status=False)
+        elif value == 'offline':
+            time_threshold = timezone.now() - timedelta(minutes=10)
+            queryset = queryset.exclude(device__last_device_status_timestamp__gte=time_threshold)
+        elif value == 'online':
+            time_threshold = timezone.now() - timedelta(minutes=10)
+            print("time_threshold ", time_threshold)
+            queryset = queryset.filter(device__last_device_status_timestamp__gte=time_threshold)
         return queryset

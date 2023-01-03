@@ -129,13 +129,13 @@ class Command(BaseCommand):
                                         gps_end=gps_end,
                                         gps_start=gps_start
                                     )
-                                print("trip created --> ", trip)
+                                # print("trip created --> ", trip)
                             r.delete(str(rt['imei']))
                         except Vehicle.DoesNotExist:
                             r.delete(str(rt['imei']))
                 else:
                     if status and not imei_data and not is_corrupt:
-                        print("setting data ..")
+                        # print("setting data ..")
                         # set imei data in redis
                         data = {
                             "id": rt['id'],
