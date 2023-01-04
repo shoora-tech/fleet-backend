@@ -18,8 +18,10 @@ class TripSerializer(serializers.ModelSerializer):
     vehicle_id = serializers.SlugRelatedField(
         queryset=Vehicle.objects.all(), slug_field="uuid", source="vehicle",
     )
-    driver = DriverSerializer(read_only=True)
+    driver = serializers.SerializerMethodField()
     gps_cordinates_url = serializers.SerializerMethodField()
+    trip_started_at = serializers.SerializerMethodField()
+    trip_ended_at = serializers.SerializerMethodField()
     # vehicle = VehicleSerializer(read_only=True)
     # organization = OrganizationSerializer(read_only=True)
 
@@ -40,11 +42,31 @@ class TripSerializer(serializers.ModelSerializer):
             "driver",
             "gps_cordinates_url",
             # "organization",
-            "created_at"
+            "created_at",
+            "trip_started_at",
+            "trip_ended_at",
         )
     
     def get_gps_cordinates_url(self, obj):
         return reverse("trips-path", kwargs={"uuid": obj.uuid}, request=self.context["request"])
+    
+    def get_driver(self, obj):
+        driver = obj.driver
+        if driver:
+            return driver.name
+        return None
+    
+    def get_trip_started_at(self, obj):
+        gps_start = obj.gps_start
+        if gps_start:
+            rt = RealTimeDatabase.objects.get(id=gps_start)
+            return rt.created_at
+    
+    def get_trip_ended_at(self, obj):
+        gps_end = obj.gps_end
+        if gps_end:
+            rt = RealTimeDatabase.objects.get(id=gps_end)
+            return rt.created_at
 
 
 class TripLocationSerializer(serializers.ModelSerializer):
