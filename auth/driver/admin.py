@@ -61,7 +61,7 @@ class DriverForm(forms.ModelForm):
 
 # Register your models here.
 class DriverAdmin(admin.ModelAdmin):
-    exclude=('driver_score',)
+    # exclude=('driver_score',)
     list_display=('name','organization','vehicle')
     search_fields = ("name",)
     list_filter = (OrganizationTextFilter, VehicleTextFilter)

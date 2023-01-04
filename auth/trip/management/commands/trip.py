@@ -12,6 +12,7 @@ from geopy.distance import geodesic
 from vehicle.models import Vehicle
 import pytz
 from django.utils import timezone
+from alert.models import Alert
 
 # redis storage
 r = redis.Redis(
@@ -47,6 +48,26 @@ class Command(BaseCommand):
             x[self.change_case(key)] = value
         
         return x
+    
+    def get_incidents(self, start, end):
+        alert_count = Alert.objects.filter(created_at__gte=start, created_at__lte=end).count()
+        return alert_count
+    
+    def update_driver_scorecard(self, trip):
+        driver = trip.driver
+        driver_current_score = driver.driver_score
+        distance = trip.distance
+        incidents = trip.total_incidents
+        distance_score = int(distance/100)*5
+        total_score = distance_score - incidents
+        driver_current_score += total_score
+        if driver_current_score >= 100:
+            driver_current_score = 100
+        elif driver_current_score <= 0:
+            driver_current_score = 0
+        driver.driver_score = driver_current_score
+        driver.save()
+        
     
     def get_gps_for_corrupt_data(self, imei, last_stored_point, corrupted_point):
         try:
@@ -115,6 +136,7 @@ class Command(BaseCommand):
                                 duration = 0 - duration
                             distance = geodesic(start_pos, end_pos).km
                             if distance >= 5:
+                                incidents = self.get_incidents(t1, created_at)
                                 trip = Trips.objects.create(
                                         start_latitude=str(imei_data['latitude']),
                                         start_longitude=str(imei_data['longitude']),
@@ -127,9 +149,13 @@ class Command(BaseCommand):
                                         driver=driver,
                                         vehicle=vehicle,
                                         gps_end=gps_end,
-                                        gps_start=gps_start
+                                        gps_start=gps_start,
+                                        total_incidents=incidents
                                     )
+                                self.update_driver_scorecard(trip)
+
                                 # print("trip created --> ", trip)
+
                             r.delete(str(rt['imei']))
                         except Vehicle.DoesNotExist:
                             r.delete(str(rt['imei']))
