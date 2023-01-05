@@ -96,7 +96,7 @@ services:
       cd /app
       pip install --upgrade pip
       make deps
-      celery -A auth beat -l info
+      celery -A auth beat -l debug
       '
     depends_on:
       - redis
