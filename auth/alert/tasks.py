@@ -62,7 +62,7 @@ def fetch_alerts():
         for alert in raw_alert:
             # run api to fetch video fr the same
             try:
-                print("trying for device ", alert['device_id_no'])
+                # print("trying for device ", alert['device_id_no'])
                 vehicle = Vehicle.objects.get(device__imei_number=int(alert['device_id_no']))
                 driver = vehicle.driver.first()
                 params = {
