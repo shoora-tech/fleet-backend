@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 from datetime import timedelta
 from environ import Env
+from django.utils.module_loading import import_string
 
 ENV = Env()
 Env.read_env()
@@ -235,60 +236,72 @@ STATICFILES_DIR = (os.path.join(BASE_DIR, "static"),)
 # AWS Credentials
 AWS_ACCESS_KEY_ID = ENV.str('AWS_ACCESS_KEY_ID', None)
 AWS_SECRET_ACCESS_KEY = ENV.str('AWS_SECRET_ACCESS_KEY', None)
-
-# Celery
-CELERY_BROKER_URL = "sqs://{aws_access_key}:{aws_secret_key}@".format(aws_access_key=AWS_ACCESS_KEY_ID, aws_secret_key=AWS_SECRET_ACCESS_KEY)
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_DEFAULT_QUEUE = 'Shoora-Celery'
-CELERY_RESULT_BACKEND = None # Disabling the results backend
-BROKER_TRANSPORT_OPTIONS = {
-    'region': 'ap-south-1',
-    'polling_interval': 20,
-}
-
 # AWS STORAGE
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = "shoora-dev-bucket"
 AWS_QUERYSTRING_AUTH = False
 
+# Celery
+# CELERY_BROKER_URL = "sqs://{aws_access_key}:{aws_secret_key}@".format(aws_access_key=AWS_ACCESS_KEY_ID, aws_secret_key=AWS_SECRET_ACCESS_KEY)
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
+CELERY_DEFAULT_QUEUE = 'Shoora-Celery'
+CELERY_RESULT_BACKEND = None # Disabling the results backend
+BROKER_TRANSPORT_OPTIONS = {
+    'region': 'ap-south-1',
+}
+
+CELERY_BROKER_URL = "sqs://{aws_access_key}:{aws_secret_key}@".format(aws_access_key=AWS_ACCESS_KEY_ID, aws_secret_key=AWS_SECRET_ACCESS_KEY)
+# BROKER_TRANSPORT_OPTIONS = {
+#     "region": AWS_REGION,
+#     "queue_name_prefix": ENV.str("QUEUE_NAME_PREFIX", "blast-"),
+# }
+CELERY_ALWAYS_EAGER = ENV.bool("CELERY_ALWAYS_EAGER", DEBUG)
+CELERY_EAGER_PROPAGATES = ENV.bool("CELERY_EAGER_PROPAGATES", CELERY_ALWAYS_EAGER)
+CELERY_TASK_MAX_RETRIES = ENV.int("CELERY_TASK_MAX_RETRIES", 5)
+# BLAST_CELERY_TASK_MAX_RETRIES = ENV.int("BLAST_CELERY_TASK_MAX_RETRIES", 5)
+if os.getenv("CELERYBEAT_SCHEDULE"):
+    print("got it bruhh")
+    CELERY_BEAT_SCHEDULE = import_string(os.getenv("CELERYBEAT_SCHEDULE"))
+    # print(CELERYBEAT_SCHEDULE)
+
 
 from celery.schedules import crontab
 
 
-celery_beat = ENV.str('celery_beat', False)
-CELERY_TASK_ROUTES = {
- 'alert.tasks.fetch_alerts': {'queue': 'gps'},
- 'trip.tasks.calculate_trips': {'queue': 'gps'},
- 'device.tasks.update_jsession': {'queue': 'gps'},
-}
-if celery_beat:
-    CELERY_BEAT_SCHEDULE = {
-        # 'hello': {
-        #     'task': 'alert.tasks.hello',
-        #     'schedule': crontab()  # execute every minute
-        # },
-        'alert':{
-            'task': 'alert.tasks.fetch_alerts',
-            'schedule': crontab(minute='*/10'),  # execute every minute
-            'options': {'queue': 'gps'}
-        },
-        'trip':{
-            'task': 'trip.tasks.calculate_trips',
-            'schedule': crontab(minute='*/10'),  # execute every minute
-            'options': {'queue': 'gps'}
-        },
-        'jsession':{
-            'task': 'device.tasks.update_jsession',
-            'schedule': crontab(hour="*/5"),  # execute in evry 5 hours
-            'options': {'queue': 'gps'}
-        }
-        # 'position':{
-        #     'task': 'alert.tasks.poll_task',
-        #     'schedule': 10.0  # execute every minute
-        # }
-    }
+# celery_beat = ENV.str('celery_beat', False)
+# CELERY_TASK_ROUTES = {
+#  'alert.tasks.fetch_alerts': {'queue': 'gps'},
+#  'trip.tasks.calculate_trips': {'queue': 'gps'},
+#  'device.tasks.update_jsession': {'queue': 'gps'},
+# }
+# if celery_beat:
+#     CELERY_BEAT_SCHEDULE = {
+#         # 'hello': {
+#         #     'task': 'alert.tasks.hello',
+#         #     'schedule': crontab()  # execute every minute
+#         # },
+#         'alert':{
+#             'task': 'alert.tasks.fetch_alerts',
+#             'schedule': crontab(minute='*/10'),  # execute every minute
+#             'options': {'queue': 'gps'}
+#         },
+#         'trip':{
+#             'task': 'trip.tasks.calculate_trips',
+#             'schedule': crontab(minute='*/10'),  # execute every minute
+#             'options': {'queue': 'gps'}
+#         },
+#         'jsession':{
+#             'task': 'device.tasks.update_jsession',
+#             'schedule': crontab(hour="*/5"),  # execute in evry 5 hours
+#             'options': {'queue': 'gps'}
+#         }
+#         # 'position':{
+#         #     'task': 'alert.tasks.poll_task',
+#         #     'schedule': 10.0  # execute every minute
+#         # }
+#     }
 
 # China Server URLs
 JSESSION_URL = ENV.str("JSESSION_URL", None)

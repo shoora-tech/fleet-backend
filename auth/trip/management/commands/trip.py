@@ -55,18 +55,19 @@ class Command(BaseCommand):
     
     def update_driver_scorecard(self, trip):
         driver = trip.driver
-        driver_current_score = driver.driver_score
-        distance = trip.distance
-        incidents = trip.total_incidents
-        distance_score = int(distance/100)*5
-        total_score = distance_score - incidents
-        driver_current_score += total_score
-        if driver_current_score >= 100:
-            driver_current_score = 100
-        elif driver_current_score <= 0:
-            driver_current_score = 0
-        driver.driver_score = driver_current_score
-        driver.save()
+        if driver:
+            driver_current_score = driver.driver_score
+            distance = trip.distance
+            incidents = trip.total_incidents
+            distance_score = int(distance/100)*5
+            total_score = distance_score - incidents
+            driver_current_score += total_score
+            if driver_current_score >= 100:
+                driver_current_score = 100
+            elif driver_current_score <= 0:
+                driver_current_score = 0
+            driver.driver_score = driver_current_score
+            driver.save()
         
     
     def get_gps_for_corrupt_data(self, imei, last_stored_point, corrupted_point):

@@ -82,7 +82,7 @@ services:
       cd /app
       pip install --upgrade pip
       make api-deps
-      celery -A auth worker -l info -Q gps
+      celery -A auth worker  -l INFO -c 2 -Q scheduling --max-tasks-per-child=100
       '
     
     depends_on:
@@ -96,7 +96,7 @@ services:
       cd /app
       pip install --upgrade pip
       make api-deps
-      celery -A auth beat -l info
+      celery -A auth beat -l DEBUG
       '
     depends_on:
       - redis
