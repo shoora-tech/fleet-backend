@@ -103,11 +103,21 @@ class Geofence(models.Model):
 
 
 class VehicleGeofence(models.Model):
+    IN = "IN_ALERT"
+    OUT = "OUT_ALERT"
+    BOTH = "BOTH"
+    
+    GEOFENCE_ALERT_CHOICES = (
+        (IN, 'in'),
+        (OUT, 'out'),
+        (BOTH, 'both'),
+    )
     uuid = models.UUIDField(verbose_name='UUID', default=uuid4, unique=True, editable=False)
     geofence = models.ForeignKey(Geofence, related_name='vehicle_geofences', on_delete=models.CASCADE)
     vehicle = models.ManyToManyField(Vehicle, related_name='vehicle_geofences', blank=True)
     vehicle_group = models.ManyToManyField(VehicleGroup, related_name='vehicle_geofences', blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name="vehicle_geofences")
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="vehicle_geofences", null=True, blank=True)
+    alert_type = models.CharField(choices=GEOFENCE_ALERT_CHOICES, blank=True, null=True, verbose_name="Geofence Alert", max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

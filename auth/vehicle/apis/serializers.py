@@ -130,7 +130,7 @@ class VehicleGeofenceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VehicleGeofence
-        fields = ("id", "vehicle_ids", "organization_id", "branch_id", "vehicle_group_ids", "geofence_id")
+        fields = ("id", "vehicle_ids", "organization_id", "branch_id", "vehicle_group_ids", "geofence_id", "alert_type")
 
 
 
