@@ -12,7 +12,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         return total_count
     
     def get_total_devices(self, obj):
-        total_count = obj.vehicles.count()
+        total_count = obj.devices.count()
         return total_count
     
     get_total_vehicles.short_description = 'Total Vehicles'

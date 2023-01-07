@@ -1,7 +1,7 @@
 from django.db import models
 from uuid import uuid4
 
-from organization.models import Organization
+from organization.models import Organization, Branch
 
 # Create your models here.
 
@@ -48,6 +48,9 @@ class Device(models.Model):
     is_assigned_to_vehicle = models.BooleanField(default=False)
     organization = models.ForeignKey(
         Organization, on_delete=models.SET_NULL, blank=True, null=True, related_name="devices"
+    )
+    branch = models.ForeignKey(
+        Branch, on_delete=models.SET_NULL, blank=True, null=True, related_name="devices"
     )
 
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,6 +1,6 @@
 from django.db import models
 from uuid import uuid4
-from organization.models import Organization
+from organization.models import Organization, Branch
 import datetime
 from django.core.validators import MinValueValidator
 from auth.storage import get_image_upload_path, DriverImageStorageS3
@@ -21,6 +21,9 @@ class Driver(models.Model):
     driver_score = models.IntegerField(default=100)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, blank=True, null=True
+    )
+    branch = models.ForeignKey(
+        Branch, on_delete=models.CASCADE, blank=True, null=True
     )
     vehicle = models.ForeignKey(
         Vehicle, on_delete=models.CASCADE, blank=True, null=True, related_name="driver"

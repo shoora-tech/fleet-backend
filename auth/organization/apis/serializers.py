@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from organization.models import Organization
+from organization.models import Organization, Branch
 from feature.apis.serializers import FeatureSerializer
 from feature.models import Feature
 from rest_framework.reverse import reverse
@@ -39,3 +39,26 @@ class OrganizationSerializer(serializers.ModelSerializer):
         features = Feature.objects.filter(uuid__in=feature_ids)
         organization.features.add(*features)
         return organization
+
+
+class BranchSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source="uuid")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="branch-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
+    )
+    organization_id = serializers.SlugRelatedField(source="organization", queryset=Organization.objects.all(), slug_field="uuid")
+
+    class Meta:
+        model = Branch
+        fields = (
+            "id",
+            "url",
+            "name",
+            "address",
+            "country_code",
+            "contact_number",
+            "email",
+            "is_active",
+            "organization_id",
+            "image",
+        )

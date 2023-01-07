@@ -14,6 +14,9 @@ class DriverSerializer(serializers.ModelSerializer):
     organization_id = serializers.SlugRelatedField(
         queryset=Organization.objects.all(), slug_field="uuid", source="organization"
     )
+    branch_id = serializers.SlugRelatedField(
+        queryset=Organization.objects.all(), slug_field="uuid", source="branch"
+    )
     vehicle = VehicleSerializer(read_only=True)
     # organization = OrganizationSerializer(read_only=True)
 
@@ -24,6 +27,7 @@ class DriverSerializer(serializers.ModelSerializer):
             "url",
             "name",
             "organization_id",
+            "branch_id",
             "phone_number",
             "passport_number",
             "passport_validity",

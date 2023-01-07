@@ -1,9 +1,11 @@
 from rest_framework import viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from auth.permissions import AccessControlPermission
-from .serializers import VehicleSerializer, VehicleListSerializer
-from vehicle.models import Vehicle
+from auth.permissions import GeoPermissions
+from .serializers import VehicleSerializer, VehicleListSerializer, VehicleGroupSerializer, GeofenceSerializer, VehicleGeofenceSerializer
+from vehicle.models import Vehicle, VehicleGroup, VehicleGeofence, Geofence
 from auth.filters import VehicleFilter
+from auth.viewsets import BaseViewSet
+
 
 
 class VehicleViewSet(viewsets.ModelViewSet):
@@ -26,3 +28,19 @@ class VehicleViewSet(viewsets.ModelViewSet):
         organization_id = payload["organization_id"]
         qs = self.queryset.filter(organization__uuid=organization_id).order_by("created_at")
         return qs
+
+
+class VehicleGroupViewSet(BaseViewSet):
+    queryset = VehicleGroup.objects.all()
+    serializer_class = VehicleGroupSerializer
+
+
+class VehicleGeofenceViewSet(BaseViewSet):
+    queryset = VehicleGeofence.objects.all()
+    serializer_class = VehicleGeofenceSerializer
+
+
+class GeofenceViewSet(BaseViewSet):
+    queryset = Geofence.objects.all()
+    serializer_class = GeofenceSerializer
+    permission_classes = [GeoPermissions]

@@ -32,7 +32,12 @@ SECRET_KEY = ENV.str("SECRET_KEY", "debug-secret")
 DEBUG = ENV.bool("DEBUG", False)
 
 ALLOWED_HOSTS = ["*"]
+INTERNAL_IPS = ["127.0.0.1",]
 
+# if DEBUG:
+#     import socket  # only if you haven't already imported this
+#     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+#     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 # Application definition
 
@@ -53,6 +58,7 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     "drf_spectacular",
+    "debug_toolbar",
     # Shoora modules
     "feature",
     "organization",
@@ -73,6 +79,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "auth.urls"
@@ -262,7 +269,6 @@ CELERY_EAGER_PROPAGATES = ENV.bool("CELERY_EAGER_PROPAGATES", CELERY_ALWAYS_EAGE
 CELERY_TASK_MAX_RETRIES = ENV.int("CELERY_TASK_MAX_RETRIES", 5)
 # BLAST_CELERY_TASK_MAX_RETRIES = ENV.int("BLAST_CELERY_TASK_MAX_RETRIES", 5)
 if os.getenv("CELERYBEAT_SCHEDULE"):
-    print("got it bruhh")
     CELERY_BEAT_SCHEDULE = import_string(os.getenv("CELERYBEAT_SCHEDULE"))
     # print(CELERYBEAT_SCHEDULE)
 

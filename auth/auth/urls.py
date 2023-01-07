@@ -18,7 +18,7 @@ from django.urls import include, path
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-from vehicle.views import DeviceAutocompleteView
+from vehicle.views import DeviceAutocompleteView, VehicleModelAutocompleteView
 from driver.views import DriverAutocompleteView
 
 from django.contrib import admin
@@ -53,10 +53,12 @@ urlpatterns = [
     #     name="schema-swagger-ui",
     # ),
     # path(r'^redoc/$', schema_ßview.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('__debug__/', include('debug_toolbar.urls')),
     path("auth/admin/", admin.site.urls),
     path("auth/api/v1/", include("auth.apiurls.auth_apiurls")),
     path("transport/api/v1/", include("auth.apiurls.transport_apiurls")),
     path("monitor/api/v1/", include("auth.apiurls.monitor_apiurls")),
     path("auth/vehicle_device_autocomplete", DeviceAutocompleteView.as_view(), name='vehicle_device_autocomplete'),
+    path("auth/vehicle_model_autocomplete", VehicleModelAutocompleteView.as_view(), name='vehicle_model_autocomplete'),
     path("auth/driver_vehicle_autocomplete", DriverAutocompleteView.as_view(), name='driver_vehicle_autocomplete'),
 ]

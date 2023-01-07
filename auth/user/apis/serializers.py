@@ -19,6 +19,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token.is_superuser = user.is_superuser
         if user.organization:
             token["organization_id"] = str(user.organization.uuid)
+        if user.branch:
+            token["branch_id"] = str(user.branch.uuid)
         token["roles"] = roles
         # ...
 
@@ -64,6 +66,12 @@ class UserSerializer(serializers.ModelSerializer):
         lookup_field="uuid",
         read_only=True,
     )
+    branch_url = serializers.HyperlinkedRelatedField(
+        source="branch",
+        view_name="branch-detail",
+        lookup_field="uuid",
+        read_only=True,
+    )
     allowed_features = serializers.SerializerMethodField()
     roles_url = serializers.SerializerMethodField()
     features_url = serializers.SerializerMethodField()
@@ -90,6 +98,7 @@ class UserSerializer(serializers.ModelSerializer):
             "role_ids",
             "roles",
             "organization_url",
+            "branch_url",
             "roles_url",
             "features_url",
             "vehicles_url",

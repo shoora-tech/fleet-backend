@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
-from organization.apis.viewsets import OrganizationViewSet
+from organization.apis.viewsets import OrganizationViewSet, BranchViewSet
 from user.apis.viewsets import UserViewSet, MyTokenObtainPairView, RoleViewSet, OnlyAccessTokenView
 from feature.apis.viewsets import FeatureViewSet
 from rest_framework_simplejwt.views import (
@@ -12,6 +12,7 @@ from rest_framework_simplejwt.views import (
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="users")
 router.register("organizations", OrganizationViewSet, basename="organizations")
+router.register("branches", BranchViewSet, basename="branches")
 router.register("features", FeatureViewSet, basename="features")
 router.register("roles", RoleViewSet, basename="roles")
 

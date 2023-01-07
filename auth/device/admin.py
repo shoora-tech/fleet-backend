@@ -25,24 +25,29 @@ class OrganizationTextFilter(admin.SimpleListFilter):
             return queryset.filter(organization__name__istartswith=value)
 
 
+@admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
     list_display=('imei_number','sim_number','is_assigned_to_vehicle','organization')
-    readonly_fields = ('is_assigned_to_vehicle', "get_activation_date","get_last_device_status_timestamp")
+    readonly_fields = ('is_assigned_to_vehicle', "get_activation_date",)
     search_fields = ("imei_number",)
-    exclude = ("activation_date", "last_device_status_timestamp")
+    exclude = ("activation_date", "last_device_status_timestamp",)
     list_filter = (OrganizationTextFilter, "is_assigned_to_vehicle")
+    list_per_page = 20
 
     def get_activation_date(self, obj):
-        gps = RealTimeDatabase.objects.filter(imei=obj.imei_number).first()
-        return gps.created_at
+        gps = RealTimeDatabase.objects.filter(imei=obj.imei_number)[:1]
+        if gps:
+            return gps.created_at
+        return None
     
-    def get_last_device_status_timestamp(self, obj):
-        gps = RealTimeDatabase.objects.filter(imei=obj.imei_number).last()
-        return gps.created_at
+    # def get_last_device_status_timestamp(self, obj):
+    #     gps = RealTimeDatabase.objects.filter(imei=obj.imei_number).last()
+    #     return gps.created_at
     
-    get_last_device_status_timestamp.short_description = 'Last Device Status Time'
+    # get_last_device_status_timestamp.short_description = 'Last Device Status Time'
     get_activation_date.short_description = 'Device Activation Date'
 
 
 admin.site.register(DeviceType)
-admin.site.register(Device,DeviceAdmin)
+# admin.site.register(Device,DeviceAdmin)
+# admin.site.register(Device)
