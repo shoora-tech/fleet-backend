@@ -3,6 +3,7 @@ from .models import *
 from device.models import Device
 from dal import autocomplete
 from driver.models import Driver
+from django.db.models import Count, Q
 
 # Register your models here.
 
@@ -62,6 +63,13 @@ class VehicleForm(forms.ModelForm):
                         forward=['organization']
                 ),
             )
+    model = forms.ModelChoiceField(
+                queryset=VehicleModel.objects.all(),
+                widget=autocomplete.ModelSelect2(
+                        url='vehicle_model_autocomplete',
+                        forward=['make']
+                ),
+            )
     class Meta:
         model = Vehicle
         fields = '__all__'
@@ -76,7 +84,7 @@ class DriverInline(admin.TabularInline):
 
 @admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ("vin", "make", "model", "vehicle_type",'last_status_update', "get_organization_name")
+    list_display = ("vin", "make", "model", "vehicle_type",'created_at', "get_last_device_timestamp", "get_organization_name")
     autocomplete_fields = ["organization", "device"]
     list_per_page = 20
     search_fields = ("vin",)
@@ -105,9 +113,34 @@ class VehicleAdmin(admin.ModelAdmin):
     def get_organization_name(self, obj):
         return obj.organization.name
     
-    get_organization_name.short_description = 'Organization'
+    def get_last_device_timestamp(self, obj):
+        return obj.device.last_device_status_timestamp
     
-    class Media:
-        js = (
-            'vehicle/js/chained_dd.js',
-        )
+    get_organization_name.short_description = 'Organization'
+    get_last_device_timestamp.short_description = "Last Device Time"
+
+
+@admin.register(VehicleGroup)
+class VehicleGroupAdmin(admin.ModelAdmin):
+    list_display = ("name", "organization", "branch", "get_total_vehicles")
+
+    def get_total_vehicles(self, obj):
+        return obj.vehicle.count()
+
+
+@admin.register(VehicleGeofence)
+class VehicleGeofenceAdmin(admin.ModelAdmin):
+    list_display = ("organization", "branch", "get_total_vehicles")
+
+    def get_total_vehicles(self, obj):
+        vehicles = list(obj.vehicle.values_list("id", flat=True))
+        vehicle_count = len(vehicles)
+        vehicles_in_group = obj.vehicle_group.annotate(vehicle_count=Count('vehicle', filter=~Q(vehicle__id__in=vehicles)))
+        for vehicle in vehicles_in_group:
+            vehicle_count += vehicle.vehicle_count
+        return vehicle_count
+    
+    get_total_vehicles.short_description = "Total Vehicles"
+@admin.register(Geofence)
+class GeofeneAdmin(admin.ModelAdmin):
+    list_display = ("name", "organization", "branch", )

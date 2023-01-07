@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from uuid import UUID, uuid4
 from django.utils.translation import gettext as _
 
-from organization.models import Organization
+from organization.models import Organization, Branch
 from feature.models import Feature
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import Permission
@@ -58,6 +58,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     installer_organizations = models.ManyToManyField(
         Organization, related_name="installers"
     )
+
+    branch = models.ForeignKey(
+        Branch,
+        blank=True,
+        null=True,
+        verbose_name=_("Branch"),
+        related_name="users",
+        on_delete=models.CASCADE,
+    )
+    # installer_organizations = models.ManyToManyField(
+    #     Organization, related_name="installers"
+    # )
     created_at = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

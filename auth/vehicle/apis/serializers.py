@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from vehicle.models import Vehicle, VehicleMake, VehicleModel, VehicleType
+from vehicle.models import Vehicle, VehicleMake, VehicleModel, VehicleType, Geofence, VehicleGeofence, VehicleGroup
 from alert.models import RealTimeDatabase
+from organization.models import Organization, Branch
 
 # from vehicle.apis.serializers import VehicleSerializer
 from organization.apis.serializers import OrganizationSerializer
@@ -45,11 +46,9 @@ class VehicleListSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="vehicles-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
     )
-    # organization = OrganizationSerializer(read_only=True)
-    # organization = serializers.SlugRelatedField(
-    #     queryset=Organization.objects.all(), slug_field="uuid"
-    # )
     organization = serializers.ReadOnlyField(source="organization.name")
+    branch = serializers.ReadOnlyField(source="branch.name", allow_null=True)
+    # branch_id = serializers.SlugRelatedField(source="branch", slug_field="uuid", queryset=Branch.objects.all())
     make = serializers.ReadOnlyField(source="make.name")
     model = serializers.ReadOnlyField(source="model.name")
     vehicle_type = serializers.ReadOnlyField(source="vehicle_type.name")
@@ -69,6 +68,7 @@ class VehicleListSerializer(serializers.ModelSerializer):
             "vin",
             "vehicle_type",
             "organization",
+            "branch",
             "device",
             "driver",
             'status',
@@ -88,4 +88,49 @@ class VehicleListSerializer(serializers.ModelSerializer):
     
     def get_last_device_status_timestamp(self, obj):
         return obj.device.last_device_status_timestamp
+
+
+class VehicleGroupSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='uuid')
+    vehicle_ids = serializers.SlugRelatedField(source="vehicle", queryset=Vehicle.objects.all(), slug_field='uuid', many=True)
+    # vehicle_group = serializers.SlugRelatedField(queryset=VehicleGroup.objects.all(), slug_field='uuid')
+    # geofence = serializers.SlugRelatedField(queryset=Geofence.objects.all(), slug_field='uuid')
+    organization_id = serializers.SlugRelatedField(source="organization", queryset=Organization.objects.all(), slug_field="uuid")
+    branch_id = serializers.SlugRelatedField(source="branch", queryset=Branch.objects.all(), slug_field="uuid", allow_null=True, required=False)
+
+
+    class Meta:
+        model = VehicleGroup
+        fields = ("id", "vehicle_ids", "organization_id", "branch_id", "name")
+
+
+class GeofenceSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='uuid')
+    # vehicle = serializers.SlugRelatedField(queryset=Vehicle.objects.all(), slug_field='uuid', many=True)
+    # vehicle_group = serializers.SlugRelatedField(queryset=VehicleGroup.objects.all(), slug_field='uuid')
+    # geofence = serializers.SlugRelatedField(queryset=Geofence.objects.all(), slug_field='uuid')
+    organization_id = serializers.SlugRelatedField(source="organization", queryset=Organization.objects.all(), slug_field="uuid")
+    branch_id = serializers.SlugRelatedField(source="branch", queryset=Branch.objects.all(), slug_field="uuid", allow_null=True, required=False)
+
+
+    class Meta:
+        model = Geofence
+        fields = ("id", "latitude", "longitude", "radius", "organization_id", "branch_id", "name")
+
+
+
+class VehicleGeofenceSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='uuid')
+    vehicle_ids = serializers.SlugRelatedField(source="vehicle", queryset=Vehicle.objects.all(), slug_field='uuid', many=True)
+    vehicle_group_ids = serializers.SlugRelatedField(source="vehicle_group", queryset=VehicleGroup.objects.all(), slug_field='uuid', many=True, required=False, allow_null=True)
+    geofence_id = serializers.SlugRelatedField(source="geofence", queryset=Geofence.objects.all(), slug_field='uuid')
+    organization_id = serializers.SlugRelatedField(source="organization", queryset=Organization.objects.all(), slug_field="uuid")
+    branch_id = serializers.SlugRelatedField(source="branch", queryset=Branch.objects.all(), slug_field="uuid", allow_null=True, required=False)
+
+
+    class Meta:
+        model = VehicleGeofence
+        fields = ("id", "vehicle_ids", "organization_id", "branch_id", "vehicle_group_ids", "geofence_id", "alert_type")
+
+
 

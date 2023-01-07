@@ -4,7 +4,7 @@ from vehicle.models import Vehicle
 from trip.models import Trips
 from django.db.models import OuterRef, Subquery
 from datetime import datetime, timedelta
-import pytz
+from organization.models import Branch
 from django.utils import timezone
 
 class RealtimeDBFilter(filters.FilterSet):
@@ -68,6 +68,12 @@ class VehicleFilter(filters.FilterSet):
             queryset = queryset.exclude(device__last_device_status_timestamp__gte=time_threshold)
         elif value == 'online':
             time_threshold = timezone.now() - timedelta(minutes=10)
-            print("time_threshold ", time_threshold)
             queryset = queryset.filter(device__last_device_status_timestamp__gte=time_threshold)
         return queryset
+
+
+class BranchFilter(filters.FilterSet):
+    organization_id = filters.UUIDFilter(field_name="organization",)
+    class Meta:
+        model = Branch
+        fields = ("organization_id",)

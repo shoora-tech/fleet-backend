@@ -5,16 +5,22 @@ from rest_framework import status
 
 
 class BaseViewSet(viewsets.ModelViewSet):
+    lookup_field = "uuid"
+
     def get_queryset(self):
-        payload = self.request.auth.payload
-        JWTA = JWTAuthentication()
-        user = JWTA.get_user(payload)
+        # payload = self.request.auth.payload
+        # JWTA = JWTAuthentication()
+        # user = JWTA.get_user(payload)
+        user = self.request.user
         qs = self.queryset
         if self.action == "list":
             if user.is_superuser:
                 return self.queryset.order_by("-created_at")
-            organization_id = payload["organization_id"]
-            qs = self.queryset.filter(organization__uuid=organization_id)
+            # organization_id = payload["organization_id"]
+            # branch_id = payload["branch_id"]
+            organization_id = user.organization_id
+            branch_id = user.branch_id
+            qs = self.queryset.filter(organization__uuid=organization_id, branch__uuid=branch_id)
             return qs.order_by("-created_at")
         return qs
 
