@@ -4,6 +4,7 @@ from alert.models import RealTimeDatabase, Alert
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from device.models import Device
 from vehicle.models import Vehicle
+from organization.models import Organization
 from django.db.models import Max
 from auth.filters import RealtimeDBFilter, AlertFilter
 
@@ -20,10 +21,8 @@ class RealtimeDatabaseViewSet(viewsets.ReadOnlyModelViewSet):
         if user.is_superuser:
             return self.queryset
         organization_id = payload["organization_id"]
-        # all imei number for devices in this organization
-        device_imeis = list(Device.objects.filter(organization__uuid=organization_id, is_assigned_to_vehicle=True).values_list("imei_number", flat=True))
-        qs = self.queryset.filter(imei__in=device_imeis, is_corrupt=False)
-        # qs = qs.annotate(latest=Max('created_at'))
+        org = Organization.objects.get(uuid=organization_id)
+        qs = self.queryset.filter(organization=org).values("uuid", "imei", "latitude", "longitude", "speed", "ignition_status", "created_at")
         qs = qs.order_by('imei', '-created_at').distinct('imei')
         return qs
 

@@ -11,18 +11,18 @@ class RealTimeDatabaseSerializer(serializers.ModelSerializer):
         model = RealTimeDatabase
         fields = (
             "id",
-            "location_packet_type",
-            "message_body_length",
+            # "location_packet_type",
+            # "message_body_length",
             "imei",
-            "message_serial_number",
-            "alarm_series",
-            "terminal_status",
+            # "message_serial_number",
+            # "alarm_series",
+            # "terminal_status",
             "ignition_status",
             "latitude",
             "longitude",
-            "height",
+            # "height",
             "speed",
-            "direction",
+            # "direction",
             "created_at",
         )
 
