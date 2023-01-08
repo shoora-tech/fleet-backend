@@ -29,8 +29,15 @@ class RealTimeDatabase(models.Model):
     is_corrupt = models.BooleanField(default=False)
     raw_hex_data = models.TextField(blank=True, null=True)
     device_time = models.CharField(max_length=12, blank=True, null=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True, related_name="live_data")
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+    class Meta:
+        # indexing on imei number
+        indexes = [
+            models.Index(fields=['organization'])
+        ]
 
     def __str__(self) -> str:
         return self.imei
