@@ -82,7 +82,7 @@ class AlertSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         video_url = obj.alert_video_url_shoora
         if video_url:
-            if not request.is_secure():
+            if request.is_secure():
                 video_url = video_url.replace("http", "https")
         return video_url
             
