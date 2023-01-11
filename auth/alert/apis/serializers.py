@@ -47,10 +47,11 @@ class AlertSerializer(serializers.ModelSerializer):
         slug_field="vin",
         read_only=True
     )
-    video_url = serializers.ReadOnlyField(source="alert_video_url_shoora",)
+    # video_url = serializers.ReadOnlyField(source="alert_video_url_shoora",)
     alert_name = serializers.ReadOnlyField(source="alarm_name",)
     # driver = DriverSerializer(read_only=True, allow_null=True)
     driver = serializers.SerializerMethodField()
+    video_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Alert
@@ -75,5 +76,16 @@ class AlertSerializer(serializers.ModelSerializer):
             x = DriverOnlySerializer(driver, context={'request': self.context['request']})
             return x.data
         return None
+    
+    def get_video_url(self, obj):
+        # convert http to https
+        request = self.context["request"]
+        video_url = obj.alert_video_url_shoora
+        if video_url:
+            if request.is_secure():
+                video_url = video_url.replace("http", "https")
+        return video_url
+            
+            
 
 
