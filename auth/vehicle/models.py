@@ -131,6 +131,7 @@ def update_geofence_data(sender, instance, created, **kwargs):
         "longitude": instance.longitude,
         "radius": instance.radius
     }
+    print("updating ..")
     geos = str(instance.latitude)+","+str(instance.longitude)+","+str(instance.radius)
     from vehicle.tasks import update_geofence_redis
     update_geofence_redis.delay(str(instance.uuid), geos)

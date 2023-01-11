@@ -29,6 +29,8 @@ services:
     image: python:3.7
     volumes:
       - ../../auth:/app
+    environment:
+      - PYTHONUNBUFFERED=1
     command: |
       sh -c '
       cd /app
@@ -50,7 +52,7 @@ services:
       cd /app
       pip install --upgrade pip
       make api-deps
-      celery -A auth worker  -l INFO -c 2 -Q celery --max-tasks-per-child=100
+      celery -A auth worker  -l DEBUG -c 2 -Q celery --max-tasks-per-child=100
       '
     
     depends_on:
