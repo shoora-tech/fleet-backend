@@ -81,6 +81,13 @@ class RealtimeDBAdmin(admin.ModelAdmin):
     list_filter = (GpsIdTextFilter, ('created_at', DateFieldListFilter),)
 
 
+@admin.register(LatestGPS)
+class LatestGpsAdmin(admin.ModelAdmin):
+    list_display = ("imei", "latitude", "longitude", "created_at")
+    search_fields = ("imei",)
+    # list_filter = (GpsIdTextFilter, ('created_at', DateFieldListFilter),)
+
+
 @admin.register(Alert)
 class AlertAdmin(admin.ModelAdmin):
     list_display = ("vehicle", "organization", "driver", "alarm_name", "alert_created_at", "alert_video_url")
