@@ -1,8 +1,9 @@
 from django.db import models
 from uuid import UUID, uuid4
 from organization.models import Organization
-from vehicle.models import Vehicle
+from vehicle.models import Vehicle, Geofence
 from driver.models import Driver
+from device.models import Device
 
 # Create your models here.
 
@@ -122,3 +123,29 @@ class RawAlert(models.Model):
     alert_type_3 = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class GeoFenceAlert(models.Model):
+    IN = "IN_ALERT"
+    OUT = "OUT_ALERT"
+    BOTH = "BOTH"
+    
+    GEOFENCE_ALERT_CHOICES = (
+        (IN, 'in'),
+        (OUT, 'out'),
+        (BOTH, 'both'),
+    )
+    uuid = models.UUIDField(
+        default=uuid4,
+        unique=True,
+        editable=False,
+        verbose_name="UUID",
+    )
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="geofence_alerts")
+    geofence = models.ForeignKey(Geofence, on_delete=models.CASCADE, related_name="geofence_alerts")
+    alert_type = models.CharField(choices=GEOFENCE_ALERT_CHOICES, verbose_name="Geofence Alert", max_length=10)
+    latitude = models.CharField(max_length=20, blank=True, null=True)
+    longitude = models.CharField(max_length=20, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+

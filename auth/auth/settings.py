@@ -326,6 +326,11 @@ from celery.schedules import crontab
 JSESSION_URL = ENV.str("JSESSION_URL", None)
 FETCH_ALARM_VIDEO_URL = ENV.str("FETCH_ALARM_VIDEO_URL", None)
 
+# Redis settings
+REDIS_HOST = ENV.str("REDIS_HOST", '127.0.0.1')
+REDIS_PORT = ENV.int("REDIS_PORT", 6379)
+REDIS_PASSWORD = ENV.str("REDIS_PASSWORD", 6379)
+
 # print(JSESSION_URL)
 
 AUTH_USER_MODEL = "user.User"

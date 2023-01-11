@@ -2,10 +2,19 @@ from celery import shared_task
 from vehicle.models import VehicleGeofence, Geofence
 from django.core.cache import cache
 import redis
+from django.conf import settings
 
+# r = redis.Redis(
+#     host='redis',
+#     port=6379, 
+#     db=0,
+#     charset="utf-8",
+#     decode_responses=True
+#     )
 r = redis.Redis(
-    host='redis',
-    port=6379, 
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT, 
+    password=settings.REDIS_PASSWORD,
     db=0,
     charset="utf-8",
     decode_responses=True
@@ -13,6 +22,7 @@ r = redis.Redis(
 
 @shared_task
 def update_geofence_redis(geofence_id, geo_object):
+    print("saving obj ... ")
     r.set(geofence_id, geo_object)
 
 
