@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from alert.models import RealTimeDatabase, Alert
+from alert.models import RealTimeDatabase, Alert, LatestGPS
 from vehicle.models import Vehicle
 from trip.models import Trips
 from django.db.models import OuterRef, Subquery
@@ -20,6 +20,26 @@ class RealtimeDBFilter(filters.FilterSet):
             vehicle = Vehicle.objects.get(uuid=value)
             gps = RealTimeDatabase.objects.filter(imei=str(vehicle.device.imei_number), is_corrupt=False).order_by("-created_at")[:1]
             return gps
+        except Vehicle.DoesNotExist:
+            return queryset.none()
+
+
+class LatestGpsFilter(filters.FilterSet):
+    imei = filters.NumberFilter(field_name="imei")
+    vehicle_id = filters.CharFilter(field_name="vehicle", method='filter_vehicle')
+
+    class Meta:
+        model = LatestGPS
+        fields = ['imei', 'vehicle_id']
+    
+    def filter_vehicle(self, queryset, name, value):
+        try:
+            vehicle = Vehicle.objects.get(uuid=value)
+            try:
+                gps = LatestGPS.objects.get(imei=str(vehicle.device.imei_number))
+                return gps
+            except LatestGPS.DoesNotExist:
+                return queryset.none()
         except Vehicle.DoesNotExist:
             return queryset.none()
 
