@@ -49,6 +49,8 @@ class AccessControlPermission(BasePermission):
         # print(" view ", view.basename)
         if view.basename == 'device-status':
             return True
+        if view.basename == 'trips-stats':
+            return True
         if user.is_superuser:
             return True
         try:

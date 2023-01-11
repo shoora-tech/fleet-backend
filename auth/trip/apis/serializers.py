@@ -106,3 +106,11 @@ class TripLocationSerializer(serializers.ModelSerializer):
         if gps_end:
             rt = RealTimeDatabase.objects.get(id=gps_end)
             return rt.created_at
+
+
+class TripStatsSerializer(serializers.Serializer):
+    total_trips = serializers.IntegerField()
+    total_distance = serializers.IntegerField()
+    total_duration = serializers.IntegerField()
+    total_incidents = serializers.IntegerField()
+

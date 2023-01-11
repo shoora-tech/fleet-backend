@@ -2,8 +2,9 @@ from django.db import models
 from uuid import uuid4
 from organization.models import Organization, Branch
 from device.models import Device
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.core.cache import cache
 
 # Create your models here.
 
@@ -121,3 +122,42 @@ class VehicleGeofence(models.Model):
     alert_type = models.CharField(choices=GEOFENCE_ALERT_CHOICES, blank=True, null=True, verbose_name="Geofence Alert", max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+@receiver(post_save, sender=Geofence)
+def update_geofence_data(sender, instance, created, **kwargs):
+    geo_obj = {
+        "latitude": instance.latitude,
+        "longitude": instance.longitude,
+        "radius": instance.radius
+    }
+    geos = str(instance.latitude)+","+str(instance.longitude)+","+str(instance.radius)
+    from vehicle.tasks import update_geofence_redis
+    update_geofence_redis.delay(str(instance.uuid), geos)
+
+
+@receiver(post_delete, sender=Geofence)
+def remove_geofence_from_redis(sender, instance, **kwargs):
+    
+    from vehicle.tasks import remove_geofence_redis
+    remove_geofence_redis.delay(str(instance.uuid))
+
+
+@receiver(post_delete, sender=Geofence)
+def remove_geofence_from_associated_vehicles_in_redis(sender, instance, **kwargs):
+    from vehicle.tasks import remove_geofence_from_vehicles_redis
+    vehicle_geofence_ids = list(instance.vehicle_geofences.all().values("uuid"))
+    remove_geofence_from_vehicles_redis.delay(vehicle_geofence_ids)
+
+
+@receiver(post_delete, sender=VehicleGeofence)
+def remove_geofence_from_associated_vehicles_in_redis(sender, instance, **kwargs):
+    from vehicle.tasks import remove_geofence_from_vehicle_geofence_redis
+    # vehicle_geofence_ids = list(instance.vehicle_geofences.all().values("uuid"))
+    remove_geofence_from_vehicle_geofence_redis.delay(instance.uuid)
+
+
+@receiver(post_save, sender=VehicleGeofence)
+def update_vehicle_geofence(sender, instance, created, **kwargs):
+    from vehicle.tasks import update_vehicle_geofence_redis
+    update_vehicle_geofence_redis.delay(instance.uuid)

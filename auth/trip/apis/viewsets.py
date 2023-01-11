@@ -6,9 +6,12 @@ from auth.viewsets import BaseViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from trip.models import Trips
-from trip.apis.serializers import TripSerializer, TripLocationSerializer
+from trip.apis.serializers import TripSerializer, TripLocationSerializer, TripStatsSerializer
 from auth.filters import TripFilter, TripLocationFilter
 from rest_framework.decorators import action
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Sum, Count
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,4 +75,32 @@ class TripLocationViewSet(viewsets.ReadOnlyModelViewSet):
     # def get_queryset(self):
     #     print("getting data")
     #     return super().get_queryset().order_by('-created_at')
+
+
+class TripStatsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Trips.objects.all()
+    serializer_class = TripStatsSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        user = self.request.user
+        organization_id = user.organization_id
+        last_7_days = timezone.now() - timedelta(days=7)
+        qs = self.queryset.filter(
+            created_at__gte=last_7_days,
+            vehicle__organization__uuid=organization_id
+            ).aggregate(
+            total_trips=Count("id"),
+            total_distance=Sum("distance"),
+            total_duration=Sum("duration"),
+            total_incidents=Sum("total_incidents")
+            )
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        serializer = self.serializer_class(data=qs)
+        serializer.is_valid()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     

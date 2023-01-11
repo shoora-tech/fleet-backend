@@ -100,6 +100,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = "auth.wsgi.application"
 
 # Rest Framework
@@ -140,6 +142,17 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
+
+# Cache
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://xxxxx/0",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#        }
+#    }
+# }
 
 # SWAGGER
 SWAGGER_SETTINGS = {
@@ -253,7 +266,7 @@ AWS_QUERYSTRING_AUTH = False
 # CELERY_ACCEPT_CONTENT = ['application/json']
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TASK_SERIALIZER = 'json'
-CELERY_DEFAULT_QUEUE = 'Shoora-Celery'
+# CELERY_TASK_DEFAULT_QUEUE = 'Shoora-Celery'
 CELERY_RESULT_BACKEND = None # Disabling the results backend
 BROKER_TRANSPORT_OPTIONS = {
     'region': 'ap-south-1',

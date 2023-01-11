@@ -130,17 +130,17 @@ class VehicleGroupAdmin(admin.ModelAdmin):
 
 @admin.register(VehicleGeofence)
 class VehicleGeofenceAdmin(admin.ModelAdmin):
-    list_display = ("organization", "branch", "get_total_vehicles")
+    list_display = ("organization", "branch",)
 
-    def get_total_vehicles(self, obj):
-        vehicles = list(obj.vehicle.values_list("id", flat=True))
-        vehicle_count = len(vehicles)
-        vehicles_in_group = obj.vehicle_group.annotate(vehicle_count=Count('vehicle', filter=~Q(vehicle__id__in=vehicles)))
-        for vehicle in vehicles_in_group:
-            vehicle_count += vehicle.vehicle_count
-        return vehicle_count
+    # def get_total_vehicles(self, obj):
+    #     vehicles = list(obj.vehicle.values_list("id", flat=True))
+    #     vehicle_count = len(vehicles)
+    #     vehicles_in_group = obj.vehicle_group.annotate(vehicle_count=Count('vehicle', filter=~Q(vehicle__id__in=vehicles)))
+    #     for vehicle in vehicles_in_group:
+    #         vehicle_count += vehicle.vehicle_count
+    #     return vehicle_count
     
-    get_total_vehicles.short_description = "Total Vehicles"
+    # get_total_vehicles.short_description = "Total Vehicles"
 @admin.register(Geofence)
 class GeofeneAdmin(admin.ModelAdmin):
     list_display = ("name", "organization", "branch", )
