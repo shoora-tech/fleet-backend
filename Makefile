@@ -4,6 +4,9 @@ containers:
 main-containers:
 	cd composes/main; docker-compose up
 
+down-main-containers:
+	cd composes/main; docker-compose down
+
 main-containers-d:
 	cd composes/main; docker-compose up -d
 
