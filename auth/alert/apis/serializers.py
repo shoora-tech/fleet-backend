@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from alert.models import RealTimeDatabase, Alert, LatestGPS
 from vehicle.models import Vehicle
-from driver.apis.serializers import DriverSerializer, DriverOnlySerializer
+from driver.apis.serializers import DriverOnlySerializer
 
 
 class RealTimeDatabaseSerializer(serializers.ModelSerializer):

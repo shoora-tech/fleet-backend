@@ -2,10 +2,11 @@ from rest_framework import serializers
 from vehicle.models import Vehicle, VehicleMake, VehicleModel, VehicleType, Geofence, VehicleGeofence, VehicleGroup
 from alert.models import RealTimeDatabase
 from organization.models import Organization, Branch
-
-# from vehicle.apis.serializers import VehicleSerializer
+from alert.models import LatestGPS
 from organization.apis.serializers import OrganizationSerializer
 from rest_framework.reverse import reverse
+from driver.models import Driver
+
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -42,6 +43,10 @@ class VehicleSerializer(serializers.ModelSerializer):
 
 
 class VehicleListSerializer(serializers.ModelSerializer):
+    class DriverSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Driver
+            fields = ("name",)
     id = serializers.ReadOnlyField(source="uuid")
     url = serializers.HyperlinkedIdentityField(
         view_name="vehicles-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
@@ -52,8 +57,8 @@ class VehicleListSerializer(serializers.ModelSerializer):
     make = serializers.ReadOnlyField(source="make.name")
     model = serializers.ReadOnlyField(source="model.name")
     vehicle_type = serializers.ReadOnlyField(source="vehicle_type.name")
+    driver = DriverSerializer(read_only=True, many=True)
     device = serializers.ReadOnlyField(source="device.imei_number")
-    driver = serializers.ReadOnlyField(source="driver.name")
     status = serializers.SerializerMethodField()
     last_device_status_timestamp = serializers.SerializerMethodField()
     
@@ -88,6 +93,99 @@ class VehicleListSerializer(serializers.ModelSerializer):
     
     def get_last_device_status_timestamp(self, obj):
         return obj.device.last_device_status_timestamp
+    
+    def to_representation(self, instance):
+        data =  super().to_representation(instance)
+        drivers = data.pop("driver", None)
+        if drivers:
+            data["driver"] = drivers[0]['name']
+        else:
+            data['driver'] = None
+        return data
+
+
+class VehicleLatestGPSSerializer(serializers.ModelSerializer):
+    class DriverSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Driver
+            fields = ("name",)
+    # from driver.apis.serializers import DriverOnlySerializer
+    id = serializers.ReadOnlyField(source="uuid")
+    url = serializers.HyperlinkedIdentityField(
+        view_name="vehicles-detail", lookup_field="uuid", lookup_url_kwarg="uuid"
+    )
+    organization = serializers.ReadOnlyField(source="organization.uuid")
+    # branch = serializers.ReadOnlyField(source="branch.name", allow_null=True)
+    # branch_id = serializers.SlugRelatedField(source="branch", slug_field="uuid", queryset=Branch.objects.all())
+    make = serializers.ReadOnlyField(source="make.name")
+    model = serializers.ReadOnlyField(source="model.name")
+    vehicle_type = serializers.ReadOnlyField(source="vehicle_type.name")
+    device = serializers.ReadOnlyField(source="device.imei_number")
+    # driver = serializers.ReadOnlyField(source="driver.uuid", allow_null=True)
+    # driver = serializers.SlugRelatedField(source="driver", slug_field="name", read_only=True)
+    driver = DriverSerializer(read_only=True, many=True)
+    last_device_status_timestamp = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    
+
+    class Meta:
+        model = Vehicle
+        fields = (
+            "id",
+            "url",
+            "make",
+            "model",
+            "vin",
+            "vehicle_type",
+            "organization",
+            # "branch",
+            "device",
+            "driver",
+            'status',
+            'last_device_status_timestamp',
+            # 'current_location',
+        )
+    
+    def to_representation(self, instance):
+        data =  super().to_representation(instance)
+        drivers = data.pop("driver", None)
+        if drivers:
+            data["driver"] = drivers[0]['name']
+        else:
+            data['driver'] = None
+        data['current_location'] = None
+        return data
+    
+    def get_status(self, obj):
+        ignition_status = obj.device.ignition_status
+        speed = obj.device.speed
+        if ignition_status and speed > 0:
+            return 'moving'
+        elif ignition_status and speed == 0:
+            return 'idle'
+        elif not ignition_status:
+            return 'stopped'
+        return 'unknown'
+    
+    def get_last_device_status_timestamp(self, obj):
+        return obj.device.last_device_status_timestamp
+    
+    # def get_driver(self, obj):
+    #     driver = obj.driver.first()
+    #     if driver:
+    #         return driver.name
+    #     return None
+    
+    # def get_current_location(self, obj):
+    #     device = obj.device
+    #     try:
+    #         from alert.apis.serializers import LatestGpsSerializer
+    #         lt = LatestGPS.objects.get(imei=device.imei_number)
+    #         serializer = LatestGpsSerializer(lt, context=self.context)
+    #         # serializer.is_valid(raise_exception=True)
+    #         return serializer.data
+    #     except LatestGPS.DoesNotExist:
+    #         return None
 
 
 class VehicleGroupSerializer(serializers.ModelSerializer):
