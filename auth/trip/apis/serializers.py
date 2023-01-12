@@ -79,7 +79,7 @@ class TripLocationSerializer(serializers.ModelSerializer):
         fields = (
             "gps_cordinates",
             "trip_started_at",
-            "trip_started_at",
+            "trip_ended_at",
         )
     
     def get_gps_cordinates(self, obj):
