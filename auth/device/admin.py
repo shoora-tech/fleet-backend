@@ -27,10 +27,10 @@ class OrganizationTextFilter(admin.SimpleListFilter):
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display=('imei_number','sim_number','is_assigned_to_vehicle','organization')
+    list_display=('imei_number','sim_number','is_assigned_to_vehicle','organization', 'last_device_status_timestamp')
     readonly_fields = ('is_assigned_to_vehicle', "get_activation_date",)
     search_fields = ("imei_number",)
-    exclude = ("activation_date", "last_device_status_timestamp",)
+    exclude = ("activation_date",)
     list_filter = (OrganizationTextFilter, "is_assigned_to_vehicle")
     list_per_page = 20
 

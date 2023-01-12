@@ -4,8 +4,9 @@ from vehicle.models import Vehicle
 from trip.models import Trips
 from django.db.models import OuterRef, Subquery
 from datetime import datetime, timedelta
-from organization.models import Branch
+from organization.models import Branch, JSession
 from django.utils import timezone
+import requests
 
 class RealtimeDBFilter(filters.FilterSet):
     imei = filters.NumberFilter(field_name="imei")
@@ -70,25 +71,49 @@ class VehicleFilter(filters.FilterSet):
     vehicles_since = filters.IsoDateTimeFilter("created_at", lookup_expr="gte")
     vehicles_until = filters.IsoDateTimeFilter("created_at", lookup_expr="lt")
     status = filters.CharFilter(field_name='device', method='filter_status')
+    # video_status = filters.CharFilter(field_name='device', method='filter_video_status')
     imei = filters.CharFilter(field_name="device__imei_number")
 
     class Meta:
         model = Vehicle
         fields = ['vehicles_since','vehicles_until', 'status', 'imei']
     
+    # def filter_video_status(self, queryset, name, value):
+    #     jsession = JSession.objects.first()
+    #     jsession_id = jsession.jsesion
+    #     device_status_param = {
+    #         "jsession":jsession_id
+    #     }
+    #     device_status_url = "https://dsm.shoora.com/StandardApiAction_getDeviceOlStatus.action"
+    #     imeis = list(queryset.values_list("device__imei_number", flat=True))
+    #     imei = ','.join(imei for imei in imeis)
+    #     device_status_param["devIdno"] = imei
+    #     resp = requests.get(url=device_status_url, params=device_status_param)
+    #     device_id_status_list = []
+    #     if resp.status_code == 200:
+    #         data = resp.json()
+    #         data = data["onlines"]
+    #         onlines = [d['vid'] for d in data]
+    #         if value == "online":
+    #             return queryset.filter(vin__in=onlines)
+    #         else:
+    #             return queryset.exclude(vin__in=onlines)
+    
     def filter_status(self, queryset, name, value):
+        time_threshold = timezone.now() - timedelta(hours=12)
         if value == 'moving':
-            queryset = queryset.filter(device__ignition_status=True, device__speed__gt=0)
+            queryset = queryset.filter(device__ignition_status=True, device__speed__gt=0, device__last_device_status_timestamp__gte=time_threshold)
         elif value == 'idle':
-            queryset = queryset.filter(device__ignition_status=True, device__speed=0)
+            queryset = queryset.filter(device__ignition_status=True, device__speed=0, device__last_device_status_timestamp__gte=time_threshold)
         elif value == 'stopped':
-            queryset = queryset.filter(device__ignition_status=False)
+            queryset = queryset.filter(device__ignition_status=False, device__last_device_status_timestamp__gte=time_threshold)
         elif value == 'offline':
-            time_threshold = timezone.now() - timedelta(minutes=10)
             queryset = queryset.exclude(device__last_device_status_timestamp__gte=time_threshold)
-        elif value == 'online':
-            time_threshold = timezone.now() - timedelta(minutes=10)
-            queryset = queryset.filter(device__last_device_status_timestamp__gte=time_threshold)
+        # elif value == 'online':
+        #     time_threshold = timezone.now() - timedelta(minutes=10)
+        #     print("threshold is ", time_threshold)
+        #     queryset = queryset.filter(device__ignition_status=True, device__speed__gte=0)
+        #     queryset = queryset.filter(device__last_device_status_timestamp__gte=time_threshold)
         return queryset
 
 
